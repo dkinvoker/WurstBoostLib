@@ -1,19 +1,8 @@
 # WurstBoostLib
 
-1. Add File "settings.json" in ".vscode" folder
-Example content:
-
-{
-  "wurst.javaOpts" : [ "-XX:+UseG1GC", "-XX:+UseStringDeduplication", "-XX:+AggressiveOpts", "-Xmx1G" ],
-  "files.associations" : {
-    "wurst.build" : "yaml"
-  },
-  "search.useIgnoreFiles" : false,
-  "yaml.schemas" : {
-    "./.vscode/wbschema.json" : "/wurst.build"
-  },
-  "wurst.wurstJar" : "C:\\Users\\dkinv\\.wurst\\wurstscript.jar",
-  "wurst.wc3path" : "E:\\Gry\\Warcraft 3\\Warcraft III"
-}
-
-And edit for your own tego-tego
+1. Copy WurstSetup.jar to your Wurst Instalation Folder (.wurst)
+2. Open Reposytory in Visual Studio Code
+3. Open Terminal and run "grill install" (It will resolve all dependencies, and download theam if needed)
+4. Edit .vscode/setting.json file to include your Wartraft III instalation path
+5. Open Hello.wurst
+6. F1 -> runmap
