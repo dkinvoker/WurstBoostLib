@@ -1,0 +1,31 @@
+package PercentageDmgBonus
+
+import Bonus
+import BonusInstance
+import DmgBonusInstance
+
+/**
+Percentage DMG bonus for specific weapon
+*/
+public class PercentageDmgBonus extends Bonus
+    real bonusValue = 0
+    int weaponIndex = 0
+
+    construct(real percentageValue)
+        this.bonusValue = percentageValue
+
+    construct(real percentageValue, int weaponIndex)
+        this.bonusValue = percentageValue
+        this.weaponIndex = weaponIndex
+
+    function setBonusValue(real percentageValue)
+        this.bonusValue = percentageValue
+
+    function setWeaponIndex(int index)
+        this.weaponIndex = index
+
+    override function applyBonus(unit u) returns BonusInstance
+        let dmgBeforeBonus = u.getBaseDamage(this.weaponIndex)
+        u.setBaseDamage( (dmgBeforeBonus + dmgBeforeBonus * (this.bonusValue / 100)).toInt(), this.weaponIndex )
+        let actualBonus = u.getBaseDamage(this.weaponIndex) - dmgBeforeBonus
+        return new DmgBonusInstance(actualBonus, this.weaponIndex)

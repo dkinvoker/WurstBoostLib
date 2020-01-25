@@ -1,0 +1,23 @@
+package PercentageMoveSpeedBonus
+
+import Bonus
+import BonusInstance
+import MoveSpeedBonusInstance
+
+/**
+Percentage MovementSpeed Bonus
+*/
+public class PercentageMoveSpeedBonus extends Bonus
+    real bonusValue = 0
+
+    construct(real percentageValue)
+        this.bonusValue = percentageValue
+
+    function setBonusValue(real percentageValue)
+        this.bonusValue = percentageValue
+
+    override function applyBonus(unit u) returns BonusInstance
+        let moveSpeedBeforeBonus = u.getMoveSpeed()
+        u.setMoveSpeed(moveSpeedBeforeBonus + moveSpeedBeforeBonus * (this.bonusValue / 100.0))
+        let actualBonus = u.getMoveSpeed() - moveSpeedBeforeBonus
+        return new MoveSpeedBonusInstance(actualBonus)

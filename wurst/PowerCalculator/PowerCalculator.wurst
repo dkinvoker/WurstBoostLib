@@ -1,0 +1,100 @@
+package PowerCalculator
+
+/**
+Power Calculator helps calculate spellpower based on Hero stats
+*/
+public class PowerCalculator 
+
+    // Members
+    bool respectAttributesBonuses = true
+
+    real basePower = 0    
+    real unitLevelRatio = 0
+
+    real strRatio = 0
+    real agiRatio = 0
+    real intRatio = 0
+
+    real maxHPRatio = 0
+    real lostHPRatio = 0
+    real currentHPRatio = 0
+
+    real maxManaRatio = 0
+    real lostManaRatio = 0
+    real currentManaRatio = 0
+
+    real baseDamageRatio = 0
+    int weaponIndex = 0
+
+    real armorRatio = 0
+    real moveSpeedRatio = 0
+
+    // Functions 
+    function calculatePower(unit u) returns real
+        real powerSum = 0
+
+        powerSum += this.basePower
+        powerSum += this.unitLevelRatio * u.getLevel()
+        powerSum += this.strRatio * u.getStr(this.respectAttributesBonuses)
+        powerSum += this.agiRatio * u.getAgi(this.respectAttributesBonuses)
+        powerSum += this.intRatio * u.getInt(this.respectAttributesBonuses)
+        powerSum += this.maxHPRatio * u.getMaxHP()
+        powerSum += this.lostHPRatio * (u.getMaxHP() - u.getHP())
+        powerSum += this.currentHPRatio * u.getHP()
+        powerSum += this.maxManaRatio * u.getMaxMana()
+        powerSum += this.lostManaRatio * (u.getMaxMana() - u.getMana())
+        powerSum += this.currentManaRatio * u.getMana()
+        powerSum += this.baseDamageRatio * u.getBaseDamage(this.weaponIndex)
+        powerSum += this.armorRatio * u.getArmor()
+        powerSum += this.moveSpeedRatio * u.getMoveSpeed()
+
+        return powerSum
+
+    // Setters
+    function setRespectAttributesBonuses(bool b)
+        this.respectAttributesBonuses = b
+
+    function setBasePower(real basePower)
+        this.basePower = basePower
+    
+    function setUnitLevelRatio(real unitLevelRatio)
+        this.unitLevelRatio = unitLevelRatio
+
+    function setStrRatio(real strRatio)
+        this.strRatio = strRatio
+
+    function setAgiRatio(real agiRatio)
+        this.agiRatio = agiRatio
+
+    function setIntRatio(real intRatio)
+        this.intRatio = intRatio
+
+    function setMaxHPRatio(real maxHPRatio)
+        this.maxHPRatio = maxHPRatio
+
+    function setLostHPRatio(real lostHPRatio)
+        this.lostHPRatio = lostHPRatio
+
+    function setCurrentHPRatio(real currentHPRatio)
+        this.currentHPRatio = currentHPRatio
+
+    function setMaxManaRatio(real maxManaRatio)
+        this.maxManaRatio = maxManaRatio
+
+    function setLostManaRatio(real lostManaRatio)
+        this.lostManaRatio = lostManaRatio
+
+    function setCurrentManaRatio(real currentManaRatio)
+        this.currentManaRatio = currentManaRatio
+
+    function setBaseDamageRatio(real baseDamageRatio)
+        this.baseDamageRatio = baseDamageRatio
+
+    function setWeaponIndex(int index)
+        this.weaponIndex = index
+
+    function setArmorRatio(real armorRatio)
+        this.armorRatio = armorRatio
+
+    function setMoveSpeedRatio(real moveSpeedRatio)
+        this.moveSpeedRatio = moveSpeedRatio

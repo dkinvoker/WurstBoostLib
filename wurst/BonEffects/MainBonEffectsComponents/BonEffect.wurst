@@ -1,0 +1,66 @@
+package BonEffect
+import LinkedList
+import BonusInstance
+import public Bonus
+import ClosureTimers
+import BuffObjEditing
+
+/**
+BonEffect is container of various effects that can be applied to certain unit
+and automatically vanishes after duration time of BonEffect.
+
+Uses Bonus classes.
+Bonus class can be inherited by your own Bonuses to extend functionality
+*/
+public class BonEffect
+    private LinkedList<Bonus> bonuses = new LinkedList<Bonus>()
+    real duration = 1
+    private buffTuple bonBuff
+
+    /**
+    Sets BonEffect duration.
+    */
+    function setDuration(real duration)
+        this.duration = duration
+
+    /**
+    Adds new bonus the to BonEffect.
+    */
+    function addBonus(Bonus bonus)
+        this.bonuses.add(bonus)
+
+    /**
+    Sets buff that will be used hen BonEffect will be applied to the unit.
+    */
+    function setBuff(buffTuple bonBuff)
+        this.bonBuff = bonBuff
+
+    /**
+    Applys all of the Bonuses to the unit and sets up Buff for that unit.
+    After Duration Time of the BonEffect all bonuses and Buff will be removed.
+    */
+    function applyToUnit(unit u)
+        var bonusInstances = new LinkedList<BonusInstance>()
+        for bonus in bonuses
+            bonusInstances.add(bonus.applyBonus(u))
+            u.addAbility(bonBuff.abilId)
+        doAfter(this.duration) () ->
+            for bonusInstance in bonusInstances
+                if u != null
+                    bonusInstance.removeEffect(u)
+                destroy bonusInstance
+            destroy bonusInstances
+            u.removeAbility(bonBuff.abilId)
+
+    ondestroy
+        for bonus in this.bonuses
+            destroy bonus
+        destroy bonuses
+
+/**
+Extension method for the unit to apply BonEffect.
+Applys all of the Bonuses to the unit and sets up Buff for that unit.
+After Duration Time of the BonEffect all bonuses and Buff will be removed.
+*/
+public function unit.aplyBonEffect(BonEffect bon)
+    bon.applyToUnit(this)

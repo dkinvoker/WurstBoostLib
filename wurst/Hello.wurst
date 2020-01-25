@@ -1,0 +1,66 @@
+package Hello
+
+//MY OWN LIBLARY
+import BonEffects
+import PowerCalculator
+
+//FROM STANDARD LIBLARY
+import ClosureEvents
+import ClosureTimers
+import BuffObjEditing
+import Assets
+
+//Example of Simple Spell script
+//This script adds an effect to a spell, which increases Hero movement speed for short duration.
+//Bonus power is based on Hero Agility 
+
+// Configurable value indicating how much Hero Agility influences MovementSpeedBonus 
+@configurable real movementSpeedBonusAgiRatio
+
+//Creting appropriate Buff GameObject in the editor at comiltetime for our spell
+//Selecting Name, Desctription, Icon and Ability.
+//Name, Description and Icon do not requires explanation, but "Ability" does.
+//Ability in this context is basicy a visual effect attached to the unit while buff is on.
+//"Buffs" Objects do not contain any effects by themselfs, there are just GameObject,
+//that can be attached to the unit to display information about units state.
+//It's odd as fuck, but it is how it works. 
+//It would make more sense if you're doing something by hand inside the editor from an age of 10.
+let MY_BUFF = compiletime(createDummyBuffObject(
+	"My Buff", 
+	"This unit is buffed", 
+	Icons.bTNCurseOff, 
+	Abilities.speedTarget))
+
+init
+	print("Hello World")
+
+	//Creating a mage unit to test a spell
+	unit mage = createUnit(Player(0), 'H000', vec2(0, 0), angle(1))
+
+	//Periodicly printing mage speed for debuging and testing purposes
+	doPeriodically(2) (CallbackPeriodic cb) ->
+		print(mage.getMoveSpeed().toString())	
+
+	//Creating calculator to calculate movement speed bonus based on Hero stats 
+	let movementSpeedBonusCalculator = new PowerCalculator()
+
+	//Setting up ratios for calculator
+	movementSpeedBonusCalculator
+	..setAgiRatio(movementSpeedBonusAgiRatio)
+	..setBasePower(5)
+
+	//Calculating movement speed bonus power
+	real spellPower = movementSpeedBonusCalculator.calculatePower(mage)
+
+	//Creating an effect that will be attached to caster unit upon casting a spell
+	var bon = new BonEffect()
+	
+	bon
+	..addBonus(new PercentageMoveSpeedBonus(spellPower))
+	..setDuration(12)
+	..setBuff(MY_BUFF)
+
+
+	//Adding effect to a spell with certaing spell ID
+	EventListener.onPointCast('A000') (unit caster, vec2 target) ->
+		caster.aplyBonEffect(bon)

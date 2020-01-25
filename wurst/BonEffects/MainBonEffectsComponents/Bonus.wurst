@@ -1,0 +1,15 @@
+package Bonus
+import BonusInstance
+
+/**
+Abstract Bonus class that can be inherited by your own bonuses.
+Requires to implement one method that takes unit and modifies it.
+*/
+public abstract class Bonus
+
+    /**
+    this method should never by called manually!
+    Let BonEffect handle this instead.
+    If implemented in child class it must return BonusInstance to allow bonus removing
+    */
+    abstract function applyBonus(unit u) returns BonusInstance

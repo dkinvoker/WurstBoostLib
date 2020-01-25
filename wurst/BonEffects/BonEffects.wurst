@@ -1,0 +1,13 @@
+package BonEffects
+
+import public BonEffect
+import public MoveSpeedBonus
+import public PercentageMoveSpeedBonus
+import public DmgBonus
+import public PercentageDmgBonus
+import public AgiBonus
+import public PercentageAgiBonus
+import public StrBonus
+import public PercentageStrBonus
+import public IntBonus
+import public PercentageIntBonus

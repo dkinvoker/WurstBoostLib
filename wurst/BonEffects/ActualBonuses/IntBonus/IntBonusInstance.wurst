@@ -1,0 +1,12 @@
+package IntBonusInstance
+
+import BonusInstance
+
+public class IntBonusInstance extends BonusInstance
+    int actualBonusValue
+
+    construct(int bonusValue)
+        this.actualBonusValue = bonusValue
+
+    override function removeEffect(unit u) 
+        u.addInt(-this.actualBonusValue)

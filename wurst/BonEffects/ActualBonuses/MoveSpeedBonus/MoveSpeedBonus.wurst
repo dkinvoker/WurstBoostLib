@@ -1,0 +1,22 @@
+package MoveSpeedBonus
+import Bonus
+import BonusInstance
+import MoveSpeedBonusInstance
+
+/**
+Fixed MoveSpeedBonus bonus.
+*/
+public class MoveSpeedBonus extends Bonus
+    real bonusValue = 0
+
+    construct(real bonusValue)
+        this.bonusValue = bonusValue
+
+    function setBonusValue(real bonusValue)
+        this.bonusValue = bonusValue
+
+    override function applyBonus(unit u) returns BonusInstance
+        let moveSpeedBeforeBonus = u.getMoveSpeed()
+        u.setMoveSpeed(moveSpeedBeforeBonus + this.bonusValue)
+        let actualBonus = u.getMoveSpeed() - moveSpeedBeforeBonus
+        return new MoveSpeedBonusInstance(actualBonus)

@@ -1,0 +1,20 @@
+package PercentageStrBonus
+
+import Bonus
+import BonusInstance
+import StrBonusInstance
+
+public class PercentageStrBonus extends Bonus
+    real bonusValue = 0
+
+    construct(real precentageValue)
+        this.bonusValue = precentageValue
+
+    function setBonusValue(real precentageValue)
+        this.bonusValue = precentageValue
+
+    override function applyBonus(unit u) returns BonusInstance
+        let strBeforeBonus = u.getStr(true)
+        u.addStr(strBeforeBonus * (this.bonusValue / 100).toInt())
+        let actualBonus = u.getStr(true) - strBeforeBonus
+        return new StrBonusInstance(actualBonus)

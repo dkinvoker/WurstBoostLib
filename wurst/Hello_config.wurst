@@ -1,0 +1,3 @@
+package Hello_config
+
+@config real movementSpeedBonusAgiRatio = 0.5
