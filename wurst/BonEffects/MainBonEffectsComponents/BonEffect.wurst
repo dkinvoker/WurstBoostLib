@@ -40,7 +40,7 @@ public class BonEffect
     After Duration Time of the BonEffect all bonuses and Buff will be removed.
     */
     function applyToUnit(unit u)
-        var bonusInstances = new LinkedList<BonusInstance>()
+        let bonusInstances = new LinkedList<BonusInstance>()
         for bonus in bonuses
             bonusInstances.add(bonus.applyBonus(u))
             u.addAbility(bonBuff.abilId)

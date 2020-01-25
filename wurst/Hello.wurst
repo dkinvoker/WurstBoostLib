@@ -35,7 +35,7 @@ init
 	print("Hello World")
 
 	//Creating a mage unit to test a spell
-	unit mage = createUnit(Player(0), 'H000', vec2(0, 0), angle(1))
+	let mage = createUnit(Player(0), 'H000', vec2(0, 0), angle(1))
 
 	//Periodicly printing mage speed for debuging and testing purposes
 	doPeriodically(2) (CallbackPeriodic cb) ->
@@ -50,10 +50,10 @@ init
 	..setBasePower(5)
 
 	//Calculating movement speed bonus power
-	real spellPower = movementSpeedBonusCalculator.calculatePower(mage)
+	let spellPower = movementSpeedBonusCalculator.calculatePower(mage)
 
 	//Creating an effect that will be attached to caster unit upon casting a spell
-	var bon = new BonEffect()
+	let bon = new BonEffect()
 	
 	bon
 	..addBonus(new PercentageMoveSpeedBonus(spellPower))
