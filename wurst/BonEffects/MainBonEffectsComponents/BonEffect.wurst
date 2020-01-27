@@ -61,7 +61,6 @@ public class BonEffect
             //Handle OnExpiration Event
             if this.onExpiredHandler != null
                 this.onExpiredHandler.handleBonExpiration(u, this)
-                destroy this.onExpiredHandler
 
     /**
     Sets handler to be called after bon expiries
