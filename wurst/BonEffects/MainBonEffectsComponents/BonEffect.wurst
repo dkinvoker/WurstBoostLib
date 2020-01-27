@@ -6,6 +6,12 @@ import ClosureTimers
 import BuffObjEditing
 
 /**
+Interface for bonExpiration handling
+*/
+interface OnBonExpiredHandler 
+    abstract function handleBonExpiration(unit bonTarget, BonEffect bonEffect)
+
+/**
 BonEffect is container of various effects that can be applied to certain unit
 and automatically vanishes after duration time of BonEffect.
 
@@ -16,6 +22,7 @@ public class BonEffect
     private LinkedList<Bonus> bonuses = new LinkedList<Bonus>()
     real duration = 1
     private buffTuple bonBuff
+    private OnBonExpiredHandler onExpiredHandler = null
 
     /**
     Sets BonEffect duration.
@@ -51,6 +58,15 @@ public class BonEffect
                 destroy bonusInstance
             destroy bonusInstances
             u.removeAbility(bonBuff.abilId)
+            //Handle OnExpiration Event
+            if this.onExpiredHandler != null
+                this.onExpiredHandler.handleBonExpiration(u, this)
+
+    /**
+    Sets handler to be called after bon expiries
+    */
+    function onExpired(OnBonExpiredHandler handler)
+        this.onExpiredHandler = handler
 
     ondestroy
         for bonus in this.bonuses
