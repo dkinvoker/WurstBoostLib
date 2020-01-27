@@ -8,7 +8,7 @@ import IntBonusInstance
 Percentage MovementSpeed Bonus
 */
 public class PercentageIntBonus extends Bonus
-    real bonusValue = 0
+    private real bonusValue = 0
 
     construct(real percentageValue)
         this.bonusValue = percentageValue

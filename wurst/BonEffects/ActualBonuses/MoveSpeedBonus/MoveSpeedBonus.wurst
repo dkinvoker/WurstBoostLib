@@ -7,7 +7,7 @@ import MoveSpeedBonusInstance
 Fixed MoveSpeedBonus bonus.
 */
 public class MoveSpeedBonus extends Bonus
-    real bonusValue = 0
+    private real bonusValue = 0
 
     construct(real bonusValue)
         this.bonusValue = bonusValue

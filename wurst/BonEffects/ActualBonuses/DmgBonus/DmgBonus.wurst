@@ -8,8 +8,8 @@ import DmgBonusInstance
 Fixed DMG bonus for specifict weapon
 */
 public class DmgBonus extends Bonus
-    int bonusValue = 0
-    int weaponIndex = 0
+    private int bonusValue = 0
+    private int weaponIndex = 0
 
     construct(int bonusValue)
         this.bonusValue = bonusValue

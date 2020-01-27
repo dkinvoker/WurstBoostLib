@@ -5,7 +5,7 @@ import BonusInstance
 import StrBonusInstance
 
 public class StrBonus extends Bonus
-    int bonusValue = 0
+    private int bonusValue = 0
 
     construct (int value)
         this.bonusValue = value

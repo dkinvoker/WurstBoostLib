@@ -20,7 +20,7 @@ Bonus class can be inherited by your own Bonuses to extend functionality
 */
 public class BonEffect
     private LinkedList<Bonus> bonuses = new LinkedList<Bonus>()
-    real duration = 1
+    private real duration = 1
     private buffTuple bonBuff
     private OnBonExpiredHandler onExpiredHandler = null
 

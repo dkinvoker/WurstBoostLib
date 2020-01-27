@@ -3,7 +3,7 @@ package StrBonusInstance
 import BonusInstance
 
 public class StrBonusInstance extends BonusInstance
-    int actualBonusValue
+    private int actualBonusValue
 
     construct(int bonusValue)
         this.actualBonusValue = bonusValue

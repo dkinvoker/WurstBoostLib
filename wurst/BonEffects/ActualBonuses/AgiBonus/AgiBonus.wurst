@@ -8,7 +8,7 @@ import AgiBonusInstance
 Fixed Agi Bonus bonus.
 */
 public class AgiBonus extends Bonus
-    int bonusValue = 0
+    private int bonusValue = 0
 
     construct(int bonusValue)
         this.bonusValue = bonusValue

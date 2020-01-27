@@ -5,7 +5,7 @@ import BonusInstance
 import StrBonusInstance
 
 public class PercentageStrBonus extends Bonus
-    real bonusValue = 0
+    private real bonusValue = 0
 
     construct(real precentageValue)
         this.bonusValue = precentageValue
