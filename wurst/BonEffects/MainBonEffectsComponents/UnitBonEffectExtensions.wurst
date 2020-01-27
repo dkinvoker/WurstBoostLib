@@ -1,0 +1,21 @@
+package UnitBonEffectExtensions
+
+import BonEffect
+
+/**
+Applys BonEffect to the unit
+*/
+public function unit.aplyBonEffect(BonEffect bon)
+    bon.applyToUnit(this)
+
+/**
+Returns true if unit is under at least one stack of BonEffect
+*/
+public function unit.isUnderBonEffect(BonEffect bon) returns boolean
+    return bon.isUnitUnderBon(this)
+
+/**
+Returns stack count of specific BonEffect
+*/
+public function unit.getBonEffectStackCount(BonEffect bon) returns int
+    return bon.getStackCount(this)

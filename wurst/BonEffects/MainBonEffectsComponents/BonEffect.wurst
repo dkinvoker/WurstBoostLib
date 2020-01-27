@@ -1,9 +1,16 @@
 package BonEffect
 import LinkedList
 import BonusInstance
-import public Bonus
+import Bonus
 import ClosureTimers
 import BuffObjEditing
+import BonStackability
+import HashMap
+
+/**
+BonEffect map to keep track of BonEffect instances (used for stackability pourposes)
+*/
+public HashMap<unit, LinkedList<BonEffect>> bonMap = new HashMap<unit, LinkedList<BonEffect>>()
 
 /**
 Interface for bonExpiration handling
@@ -23,7 +30,20 @@ public class BonEffect
     private real duration = 1
     private buffTuple bonBuff
     private OnBonExpiredHandler onExpiredHandler = null
+    private BonStackability stackability = BonStackability.REFRESH
 
+    /**
+    Sets Bon Stackability
+    */
+    function setStackability(BonStackability stackability)
+        this.stackability = stackability
+
+    /**
+    Returns current stackability option
+    */
+    function getStackability() returns BonStackability
+        return this.stackability
+    
     /**
     Sets BonEffect duration.
     */
@@ -43,10 +63,45 @@ public class BonEffect
         this.bonBuff = bonBuff
 
     /**
+    Returns true if unit has at least one stack of Bon
+    */
+    function isUnitUnderBon(unit u) returns boolean
+        if not bonMap.has(u)
+            return false
+        else
+            let filteredList = bonMap.get(u).filter( (BonEffect t) -> t == this )
+            let result = filteredList.size() > 0
+            destroy filteredList
+            return result
+
+    /**
+    Returns count of stacks that specific unit has
+    */
+    function getStackCount(unit u) returns int
+        if not bonMap.has(u)
+            return 0
+        else
+            let filteredList = bonMap.get(u).filter( (BonEffect t) -> t == this )
+            let result = filteredList.size()
+            destroy filteredList
+            return result
+
+    /**
     Applys all of the Bonuses to the unit and sets up Buff for that unit.
     After Duration Time of the BonEffect all bonuses and Buff will be removed.
     */
     function applyToUnit(unit u)
+
+        switch this.stackability
+            case STACK
+
+            case NOT_STACK
+
+            case REFRESH
+
+            case STACK_AND_REFRESH
+
+
         let bonusInstances = new LinkedList<BonusInstance>()
         for bonus in bonuses
             bonusInstances.add(bonus.applyBonus(u))
@@ -78,10 +133,3 @@ public class BonEffect
         if this.onExpiredHandler != null
             destroy this.onExpiredHandler
 
-/**
-Extension method for the unit to apply BonEffect.
-Applys all of the Bonuses to the unit and sets up Buff for that unit.
-After Duration Time of the BonEffect all bonuses and Buff will be removed.
-*/
-public function unit.aplyBonEffect(BonEffect bon)
-    bon.applyToUnit(this)

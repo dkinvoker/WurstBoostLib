@@ -1,0 +1,14 @@
+package BonStackability
+
+/**
+BonStackability Options
+STACK - The same BonEffectss will stack, but will have separate timers, and will expire individually
+NOT_STACK - If unit is already under BonEffect, the new one will be ignored
+REFRESH (default) - If unit is under BonEffect, appling the same Bon, will refresh duration of the previous ondestroy
+STACK_AND_REFRESH - Bon will stack, and refresh all the previous instances
+*/
+public enum BonStackability
+    STACK
+    NOT_STACK
+    REFRESH
+    STACK_AND_REFRESH
