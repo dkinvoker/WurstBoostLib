@@ -61,17 +61,23 @@ public class BonEffect
             //Handle OnExpiration Event
             if this.onExpiredHandler != null
                 this.onExpiredHandler.handleBonExpiration(u, this)
+                destroy this.onExpiredHandler
 
     /**
     Sets handler to be called after bon expiries
     */
     function onExpired(OnBonExpiredHandler handler)
+        //Clear previous event handler
+        if this.onExpiredHandler != null
+            destroy this.onExpiredHandler
         this.onExpiredHandler = handler
 
     ondestroy
         for bonus in this.bonuses
             destroy bonus
         destroy bonuses
+        if this.onExpiredHandler != null
+            destroy this.onExpiredHandler
 
 /**
 Extension method for the unit to apply BonEffect.
