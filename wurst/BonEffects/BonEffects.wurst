@@ -11,3 +11,4 @@ import public StrBonus
 import public PercentageStrBonus
 import public IntBonus
 import public PercentageIntBonus
+import public ShieldBonus

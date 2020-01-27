@@ -1,0 +1,39 @@
+package ShieldBonus
+
+import Bonus
+import BonusInstance
+import DamageEvent
+import ShieldBonusInstance
+
+/**
+Prevents target from taking damage up to certain damage threshold
+*/
+public class ShieldBonus extends Bonus
+
+    private real shieldPower = 0
+
+    construct(real shieldPower)
+        this.shieldPower = shieldPower
+
+    override function applyBonus(unit u) returns BonusInstance
+        let bonusInstance = new ShieldBonusInstance(this.shieldPower)
+
+        let damageEventListener = DamageEvent.addListener() -> 
+            if DamageEvent.getTarget() == u
+                let damage = DamageEvent.getAmount()
+
+                //Reduce shild Power
+                bonusInstance.reduceShield(damage)
+                //Reduce damage done
+                DamageEvent.subAmount(damage)
+
+                //If Shield was broaken add damage that exeads shield power and and the effect
+                let remainingShield = bonusInstance.getRemainingShield()
+                if remainingShield < 0
+                    DamageEvent.addAmount(-remainingShield)
+                    bonusInstance.breakShield()
+
+        bonusInstance.bindListener(damageEventListener)
+        return bonusInstance
+
+                
