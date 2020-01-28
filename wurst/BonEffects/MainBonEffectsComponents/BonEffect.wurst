@@ -36,6 +36,7 @@ public class BonEffect
 
     private OnExpiredHandler onStackExpiredHandler = null
     private OnExpiredHandler onBonExpiredHandler = null
+    private OnExpiredHandler onBonDispelledHandler = null
 
     //--------- REGION: SETTERS AND GETTERS ----------------
     function getBuff() returns buffTuple
@@ -115,6 +116,7 @@ public class BonEffect
             instance.dispell(u)
             destroyBonEffectInstance(u, instance)
         destroy bonInstances
+        this.onBonDispelledHandler.handleExpiration(u, this)
 
     //------- REGION: HELPERS -----------
     private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance
@@ -197,6 +199,12 @@ public class BonEffect
         if this.onBonExpiredHandler != null
             destroy this.onBonExpiredHandler
         this.onBonExpiredHandler = handler
+
+    function onBonDispelled(OnExpiredHandler handler)
+        //Clear previous event handler
+        if this.onBonDispelledHandler != null
+            destroy this.onBonDispelledHandler
+        this.onBonDispelledHandler = handler
 
     //------ REGION: DESTRUCTOR ------        
 
