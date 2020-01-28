@@ -15,10 +15,10 @@ BonEffect map to keep track of BonEffect instances (used for stackability pourpo
 public HashMap<unit, LinkedList<BonEffectInstance>> bonMap = new HashMap<unit, LinkedList<BonEffectInstance>>()
 
 /**
-Interface for bonExpiration handling
+Interface for bon event handling
 */
-interface OnExpiredHandler 
-    abstract function handleExpiration(unit bonTarget, BonEffect bonEffect)
+interface BonEventHandler 
+    abstract function handleEvent(unit bonTarget, BonEffect bonEffect)
 
 /**
 BonEffect is container of various effects that can be applied to certain unit
@@ -34,9 +34,9 @@ public class BonEffect
     private int maxStackCout = 25
     private BonStackability stackability = BonStackability.REFRESH
 
-    private OnExpiredHandler onStackExpiredHandler = null
-    private OnExpiredHandler onBonExpiredHandler = null
-    private OnExpiredHandler onBonDispelledHandler = null
+    private BonEventHandler onStackExpiredHandler = null
+    private BonEventHandler onBonExpiredHandler = null
+    private BonEventHandler onBonDispelledHandler = null
 
     //--------- REGION: SETTERS AND GETTERS ----------------
     function getBuff() returns buffTuple
@@ -116,7 +116,7 @@ public class BonEffect
             instance.dispell(u)
             destroyBonEffectInstance(u, instance)
         destroy bonInstances
-        this.onBonDispelledHandler.handleExpiration(u, this)
+        this.onBonDispelledHandler.handleEvent(u, this)
 
     //------- REGION: HELPERS -----------
     private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance
@@ -160,8 +160,8 @@ public class BonEffect
                     bonus.removeEffect(u)
                 destroyBonEffectInstance(u, bonInstance)
                 u.removeAbility(this.bonBuff.abilId)
-                this.onStackExpiredHandler.handleExpiration(u, this)
-                this.onBonExpiredHandler.handleExpiration(u, this)
+                this.onStackExpiredHandler.handleEvent(u, this)
+                this.onBonExpiredHandler.handleEvent(u, this)
                     
         bonInstance.bindEndOfBonCallback(bonEndCallback)
            
@@ -188,19 +188,19 @@ public class BonEffect
     /**
     Sets handler to be called after each stack expiries
     */
-    function onStackExpired(OnExpiredHandler handler)
+    function onStackExpired(BonEventHandler handler)
         //Clear previous event handler
         if this.onStackExpiredHandler != null
             destroy this.onStackExpiredHandler
         this.onStackExpiredHandler = handler
 
-    function onBonExpired(OnExpiredHandler handler)
+    function onBonExpired(BonEventHandler handler)
         //Clear previous event handler
         if this.onBonExpiredHandler != null
             destroy this.onBonExpiredHandler
         this.onBonExpiredHandler = handler
 
-    function onBonDispelled(OnExpiredHandler handler)
+    function onBonDispelled(BonEventHandler handler)
         //Clear previous event handler
         if this.onBonDispelledHandler != null
             destroy this.onBonDispelledHandler
