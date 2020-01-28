@@ -38,6 +38,9 @@ public class BonEffect
     private OnExpiredHandler onBonExpiredHandler = null
 
     //--------- REGION: SETTERS AND GETTERS ----------------
+    function getBuff() returns buffTuple
+        return this.bonBuff
+
     function setMaxStackCout(int maxCount)
         this.maxStackCout = maxCount
     
@@ -110,6 +113,14 @@ public class BonEffect
             destroy filteredList
             return result
 
+    function dispellBonEffect(unit u)
+        if not bonMap.has(u)
+            return
+        let bonInstances = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
+        for instance in bonInstances
+            instance.dispell(u)
+            destroyBonEffectInstance(u, instance)
+
     //------- REGION: HELPERS -----------
     private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance
         if not bonMap.has(u)
@@ -174,21 +185,6 @@ public class BonEffect
                 applyToUnit_STACK_AND_REFRESH(u)
             case NO_OVERHEAD
                 applyToUnit_NO_OVERHEAD(u)
-
-        // let bonusInstances = new LinkedList<BonusInstance>()
-        // for bonus in bonuses
-        //     bonusInstances.add(bonus.applyBonus(u))
-        // u.addAbility(bonBuff.abilId)
-        // doAfter(this.duration) () ->
-        //     for bonusInstance in bonusInstances
-        //         if u != null
-        //             bonusInstance.removeEffect(u)
-        //         destroy bonusInstance
-        //     destroy bonusInstances
-        //     u.removeAbility(bonBuff.abilId)
-        //     //Handle OnExpiration Event
-        //     if this.onExpiredHandler != null
-        //         this.onExpiredHandler.handleBonExpiration(u, this)
 
     //--------- REGION: EVENTS -----------
 

@@ -4,6 +4,7 @@ import LinkedList
 import BonusInstance
 import BonEffect
 import ClosureTimers
+import BuffObjEditing
 
 public class BonEffectInstance
     private LinkedList<BonusInstance> bonuses = new LinkedList<BonusInstance>()
@@ -19,6 +20,12 @@ public class BonEffectInstance
 
     function bindEndOfBonCallback(CallbackSingle callback)
         this.endOfBonCallback = callback
+
+    function dispell(unit u)
+        for bonus in this.bonuses
+            bonus.removeEffect(u)
+        u.removeAbility(this.bonEffect.getBuff().abilId)
+        this.abortCallback()
 
     function abortCallback()
         destroy this.endOfBonCallback
