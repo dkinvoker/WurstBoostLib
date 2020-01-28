@@ -6,17 +6,19 @@ import ClosureTimers
 import BuffObjEditing
 import BonStackability
 import HashMap
+import ErrorHandling
+import initlater BonEffectInstance
 
 /**
 BonEffect map to keep track of BonEffect instances (used for stackability pourposes)
 */
-public HashMap<unit, LinkedList<BonEffect>> bonMap = new HashMap<unit, LinkedList<BonEffect>>()
+public HashMap<unit, LinkedList<BonEffectInstance>> bonMap = new HashMap<unit, LinkedList<BonEffectInstance>>()
 
 /**
 Interface for bonExpiration handling
 */
-interface OnBonExpiredHandler 
-    abstract function handleBonExpiration(unit bonTarget, BonEffect bonEffect)
+interface OnExpiredHandler 
+    abstract function handleExpiration(unit bonTarget, BonEffect bonEffect)
 
 /**
 BonEffect is container of various effects that can be applied to certain unit
@@ -29,11 +31,29 @@ public class BonEffect
     private LinkedList<Bonus> bonuses = new LinkedList<Bonus>()
     private real duration = 1
     private buffTuple bonBuff
-    private OnBonExpiredHandler onExpiredHandler = null
+    private int maxStackCout = 25
     private BonStackability stackability = BonStackability.REFRESH
 
+    private OnExpiredHandler onStackExpiredHandler = null
+    private OnExpiredHandler onBonExpiredHandler = null
+
+    //--------- REGION: SETTERS AND GETTERS ----------------
+    function setMaxStackCout(int maxCount)
+        this.maxStackCout = maxCount
+    
+    function getMaxStackCout() returns int
+        switch this.stackability
+            case DO_NOT_STACK | REFRESH
+                return 1
+            case NO_OVERHEAD
+                return INT_MIN
+            default
+                return this.maxStackCout
+
     /**
-    Sets Bon Stackability
+    Sets Bon Stackability.
+    REFREASH is default.
+    BonEffects with the same Buff Id are treated as one in terms of stackability.
     */
     function setStackability(BonStackability stackability)
         this.stackability = stackability
@@ -51,85 +71,150 @@ public class BonEffect
         this.duration = duration
 
     /**
+    Sets buff that will be used hen BonEffect will be applied to the unit.
+    */
+    function setBuff(buffTuple bonBuff)
+        this.bonBuff = bonBuff
+
+    //------- REGION: OTHERS ----------
+
+    /**
     Adds new bonus the to BonEffect.
     */
     function addBonus(Bonus bonus)
         this.bonuses.add(bonus)
 
     /**
-    Sets buff that will be used hen BonEffect will be applied to the unit.
-    */
-    function setBuff(buffTuple bonBuff)
-        this.bonBuff = bonBuff
-
-    /**
-    Returns true if unit has at least one stack of Bon
+    Returns true if unit has at least one stack of Bon.
+    BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
     */
     function isUnitUnderBon(unit u) returns boolean
         if not bonMap.has(u)
             return false
         else
-            let filteredList = bonMap.get(u).filter( (BonEffect t) -> t == this )
+            let filteredList = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
             let result = filteredList.size() > 0
             destroy filteredList
             return result
 
     /**
-    Returns count of stacks that specific unit has
+    Returns count of stacks that specific unit has.
+    BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
     */
     function getStackCount(unit u) returns int
         if not bonMap.has(u)
             return 0
         else
-            let filteredList = bonMap.get(u).filter( (BonEffect t) -> t == this )
+            let filteredList = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
             let result = filteredList.size()
             destroy filteredList
             return result
+
+    //------- REGION: HELPERS -----------
+    private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance
+        if not bonMap.has(u)
+            bonMap.put(u, new LinkedList<BonEffectInstance>())
+        let result = new BonEffectInstance(this, bonuses)
+        bonMap.get(u).add(result)
+        return result
+
+    private function destroyBonEffectInstance(unit u, BonEffectInstance instance)
+        let unitBons = bonMap.get(u)..remove(instance)
+        destroy instance
+        if unitBons.size() == 0
+            bonMap.remove(u)
+
+    //------- REGION: APPLING BON --------
+
+    private function applyToUnit_STACK(unit u)
+        error("applyToUnit_STACK - Not implemented yet")
+
+    private function applyToUnit_DO_NOT_STACK(unit u)
+        error("applyToUnit_DO_NOT_STACK - Not implemented yet")
+
+    private function applyToUnit_REFRESH(unit u)
+        error("applyToUnit_REFRESH - Not implemented yet")
+
+    private function applyToUnit_STACK_AND_REFRESH(unit u)
+        error("applyToUnit_STACK_AND_REFRESH - Not implemented yet")
+
+    private function applyToUnit_NO_OVERHEAD(unit u)
+        let bonusInstances = new LinkedList<BonusInstance>()
+        for bonus in bonuses
+            bonusInstances.add(bonus.applyBonus(u))
+        u.addAbility(this.bonBuff.abilId)
+
+        let bonInstance = this.registerBonEffectInstance(u, bonusInstances)
+
+        let bonEndCallback = doAfter(this.duration) -> 
+            if u != null
+                for bonus in bonusInstances 
+                    bonus.removeEffect(u)
+                destroyBonEffectInstance(u, bonInstance)
+                u.removeAbility(this.bonBuff.abilId)
+                this.onStackExpiredHandler.handleExpiration(u, this)
+                this.onBonExpiredHandler.handleExpiration(u, this)
+                    
+        bonInstance.bindEndOfBonCallback(bonEndCallback)
+           
 
     /**
     Applys all of the Bonuses to the unit and sets up Buff for that unit.
     After Duration Time of the BonEffect all bonuses and Buff will be removed.
     */
     function applyToUnit(unit u)
-
         switch this.stackability
             case STACK
-
-            case NOT_STACK
-
+                applyToUnit_STACK(u)
+            case DO_NOT_STACK
+                applyToUnit_DO_NOT_STACK(u)
             case REFRESH
-
+                applyToUnit_REFRESH(u)
             case STACK_AND_REFRESH
+                applyToUnit_STACK_AND_REFRESH(u)
+            case NO_OVERHEAD
+                applyToUnit_NO_OVERHEAD(u)
 
+        // let bonusInstances = new LinkedList<BonusInstance>()
+        // for bonus in bonuses
+        //     bonusInstances.add(bonus.applyBonus(u))
+        // u.addAbility(bonBuff.abilId)
+        // doAfter(this.duration) () ->
+        //     for bonusInstance in bonusInstances
+        //         if u != null
+        //             bonusInstance.removeEffect(u)
+        //         destroy bonusInstance
+        //     destroy bonusInstances
+        //     u.removeAbility(bonBuff.abilId)
+        //     //Handle OnExpiration Event
+        //     if this.onExpiredHandler != null
+        //         this.onExpiredHandler.handleBonExpiration(u, this)
 
-        let bonusInstances = new LinkedList<BonusInstance>()
-        for bonus in bonuses
-            bonusInstances.add(bonus.applyBonus(u))
-            u.addAbility(bonBuff.abilId)
-        doAfter(this.duration) () ->
-            for bonusInstance in bonusInstances
-                if u != null
-                    bonusInstance.removeEffect(u)
-                destroy bonusInstance
-            destroy bonusInstances
-            u.removeAbility(bonBuff.abilId)
-            //Handle OnExpiration Event
-            if this.onExpiredHandler != null
-                this.onExpiredHandler.handleBonExpiration(u, this)
+    //--------- REGION: EVENTS -----------
 
     /**
-    Sets handler to be called after bon expiries
+    Sets handler to be called after each stack expiries
     */
-    function onExpired(OnBonExpiredHandler handler)
+    function onStackExpired(OnExpiredHandler handler)
         //Clear previous event handler
-        if this.onExpiredHandler != null
-            destroy this.onExpiredHandler
-        this.onExpiredHandler = handler
+        if this.onStackExpiredHandler != null
+            destroy this.onStackExpiredHandler
+        this.onStackExpiredHandler = handler
+
+    function onBonExpired(OnExpiredHandler handler)
+        //Clear previous event handler
+        if this.onBonExpiredHandler != null
+            destroy this.onBonExpiredHandler
+        this.onBonExpiredHandler = handler
+
+    //------ REGION: DESTRUCTOR ------        
 
     ondestroy
         for bonus in this.bonuses
             destroy bonus
         destroy bonuses
-        if this.onExpiredHandler != null
-            destroy this.onExpiredHandler
+        if this.onStackExpiredHandler != null
+            destroy this.onStackExpiredHandler
+        if this.onBonExpiredHandler != null
+            destroy onBonExpiredHandler
 

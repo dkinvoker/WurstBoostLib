@@ -1,0 +1,27 @@
+package BonEffectInstance
+
+import LinkedList
+import BonusInstance
+import BonEffect
+import ClosureTimers
+
+public class BonEffectInstance
+    private LinkedList<BonusInstance> bonuses = new LinkedList<BonusInstance>()
+    private BonEffect bonEffect
+    private CallbackSingle endOfBonCallback
+
+    construct(BonEffect bon, LinkedList<BonusInstance> bonuses)
+        this.bonEffect = bon
+        this.bonuses = bonuses
+
+    function getBonEffect() returns BonEffect
+        return this.bonEffect
+
+    function bindEndOfBonCallback(CallbackSingle callback)
+        this.endOfBonCallback = callback
+
+    function abortCallback()
+        destroy this.endOfBonCallback
+
+    ondestroy
+        destroy bonuses
