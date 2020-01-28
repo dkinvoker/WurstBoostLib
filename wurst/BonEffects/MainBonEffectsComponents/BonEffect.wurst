@@ -92,13 +92,7 @@ public class BonEffect
     BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
     */
     function isUnitUnderBon(unit u) returns boolean
-        if not bonMap.has(u)
-            return false
-        else
-            let filteredList = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
-            let result = filteredList.size() > 0
-            destroy filteredList
-            return result
+        return this.getStackCount(u) > 0 ? true : false
 
     /**
     Returns count of stacks that specific unit has.
@@ -120,6 +114,7 @@ public class BonEffect
         for instance in bonInstances
             instance.dispell(u)
             destroyBonEffectInstance(u, instance)
+        destroy bonInstances
 
     //------- REGION: HELPERS -----------
     private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance

@@ -31,4 +31,6 @@ public class BonEffectInstance
         destroy this.endOfBonCallback
 
     ondestroy
+        bonuses.forEach() (BonusInstance t) ->
+            destroy t
         destroy bonuses
