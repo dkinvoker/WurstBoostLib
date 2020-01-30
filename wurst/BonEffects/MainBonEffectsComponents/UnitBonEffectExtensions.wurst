@@ -22,5 +22,9 @@ BonEffects with the same Buff Id are treated as the same Bon in terms of stackab
 public function unit.getBonEffectStackCount(BonEffect bon) returns int
     return bon.getStackCount(this)
 
+/**
+Removes BonEffect from unit. 
+It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired
+*/
 public function unit.dispellBonEffect(BonEffect bon)
     bon.dispellBonEffect(this)

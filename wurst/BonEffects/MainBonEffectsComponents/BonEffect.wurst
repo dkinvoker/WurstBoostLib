@@ -44,6 +44,11 @@ public class BonEffect
     function setMaxStackCout(int maxCount)
         this.maxStackCout = maxCount
     
+    /**
+    Gets max amount of stacks that this BonEffect can apply.
+    If stackability is set to DO_NO_STACK or REAPPLY it will always return 1.
+    If stackability is set to NO_OVERHEAD it will return INT_MIN cuz' this BonEffect is not meant to be stacked at any way.
+    */
     function getMaxStackCout() returns int
         switch this.stackability
             case DO_NOT_STACK | REAPPLY
@@ -107,6 +112,10 @@ public class BonEffect
             destroy instancesAttachedToUnit
             return result
 
+    /**
+    Removes BonEffect from unit. 
+    It will trigger onDispelled Event but will not trigger onStackExpired() nor onBonExpired()
+    */
     function dispellBonEffect(unit u)
         if not bonMap.has(u)
             return
@@ -119,6 +128,9 @@ public class BonEffect
         this.onBonDispelledHandler.handleEvent(u, this)
 
     //------- REGION: HELPERS -----------
+    /**
+    Creates BonEffectInstance based on BonusInstances list, and inserts it to bonMap under unit u key.
+    */
     private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance
         if not bonMap.has(u)
             bonMap.put(u, new LinkedList<BonEffectInstance>())
@@ -126,12 +138,18 @@ public class BonEffect
         bonMap.get(u).add(result)
         return result
 
+    /**
+    Destroys BonEffectInstance and removes it from bonMap.
+    */
     private function clearBonEffectInstance(unit u, BonEffectInstance instance)
         let unitBons = bonMap.get(u)..remove(instance)
         destroy instance
         if unitBons.size() == 0
             bonMap.remove(u)
 
+    /**
+    Applys all of Bonuses to unit u, and returns registered BonEffectInstance
+    */
     private function applyAllBonusesAndRegisterBonEffect(unit u) returns BonEffectInstance
         let bonusInstances = new LinkedList<BonusInstance>()
         for bonus in this.bonuses
@@ -139,6 +157,10 @@ public class BonEffect
         u.addAbility(this.bonBuff.abilId)
         return this.registerBonEffectInstance(u, bonusInstances)
 
+    /**
+    Gets new LinkedList that contains all instances of this BonEffect applied to unit u.
+    BonEffect with the same buffId are considered the same BonEffect.
+    */
     private function getInstancesAttachedToUnit(unit u) returns LinkedList<BonEffectInstance>
         if not bonMap.has(u)
             return null
@@ -147,6 +169,9 @@ public class BonEffect
 
     //------- REGION: APPLING BON --------
 
+    /**
+    Handles BonEffect appling for STACK stackability option.
+    */
     private function applyToUnit_STACK(unit u)
         if this.getStackCount(u) < this.maxStackCout
             let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
@@ -162,10 +187,16 @@ public class BonEffect
 
             bonInstance.bindEndOfBonCallback(bonEndCallback)
 
+    /**
+    Handles BonEffect appling for DO_NOT_STACK stackability option.
+    */
     private function applyToUnit_DO_NOT_STACK(unit u)
         if not this.isUnitUnderBon(u)
             this.applyToUnit_NO_OVERHEAD(u)
 
+    /**
+    Handles BonEffect appling for REAPPLY stackability option.
+    */
     private function applyToUnit_REAPPLY(unit u)
         let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
         if instancesAttachedToUnit != null
@@ -175,6 +206,9 @@ public class BonEffect
             destroy instancesAttachedToUnit
         applyToUnit_NO_OVERHEAD(u)
 
+    /**
+    Handles BonEffect appling for STACK_AND_REAPPLY stackability option.
+    */
     private function applyToUnit_STACK_AND_REAPPLY(unit u)
         int countOfStackstoApply = 1
         let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
@@ -187,6 +221,9 @@ public class BonEffect
         for i = 1 to countOfStackstoApply
             this.applyToUnit_STACK(u)
 
+    /**
+    Handles BonEffect appling for NO_OVERHEAD stackability option.
+    */
     private function applyToUnit_NO_OVERHEAD(unit u)
         let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
 
@@ -221,7 +258,7 @@ public class BonEffect
     //--------- REGION: EVENTS -----------
 
     /**
-    Sets handler to be called after each stack expiries
+    Sets handler to be called after each stack expiries.
     */
     function onStackExpired(BonEventHandler handler)
         //Clear previous event handler
@@ -229,12 +266,18 @@ public class BonEffect
             destroy this.onStackExpiredHandler
         this.onStackExpiredHandler = handler
 
+    /**
+    Sets handler to be called after all stacks expiries.
+    */
     function onBonExpired(BonEventHandler handler)
         //Clear previous event handler
         if this.onBonExpiredHandler != null
             destroy this.onBonExpiredHandler
         this.onBonExpiredHandler = handler
 
+    /**
+    Sets handler to be called after bon is dispelled.
+    */
     function onBonDispelled(BonEventHandler handler)
         //Clear previous event handler
         if this.onBonDispelledHandler != null
