@@ -5,12 +5,16 @@ import BonusInstance
 import DamageEvent
 import ShieldBonusInstance
 
+interface OnShieldBroakenEventHandler 
+    function handleEvent(unit bonusTarget)
+
 /**
 Prevents target from taking damage up to certain damage threshold
 */
 public class ShieldBonus extends Bonus
 
     private real shieldPower = 0
+    private OnShieldBroakenEventHandler onShieldBroakenEventHandler = null
 
     construct(real shieldPower)
         this.shieldPower = shieldPower
@@ -32,8 +36,16 @@ public class ShieldBonus extends Bonus
                 if remainingShield < 0
                     DamageEvent.addAmount(-remainingShield)
                     bonusInstance.breakShield()
+                    this.onShieldBroakenEventHandler.handleEvent(u)
 
         bonusInstance.bindListener(damageEventListener)
         return bonusInstance
 
+    /**
+    Sets an event that will be called after shield breaks.
+    */
+    function onShieldBroaken(OnShieldBroakenEventHandler handler)
+        if this.onShieldBroakenEventHandler != null
+            destroy this.onShieldBroakenEventHandler
+        this.onShieldBroakenEventHandler = handler
                 

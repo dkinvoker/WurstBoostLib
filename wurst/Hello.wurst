@@ -6,30 +6,33 @@ import PowerCalculator
 
 //FROM STANDARD LIBLARY
 import ClosureEvents
-import ClosureTimers
 import BuffObjEditing
 import Assets
 
 //Example of Simple Spell script
-//This script adds an effect to a spell, which increases Hero movement speed for short duration.
-//Bonus power is based on Hero Agility 
+//This script adds an effect to a spell, which applys shield to caster.
+//Bonus power is based on Hero Inteligence 
 
-// Configurable value indicating how much Hero Agility influences MovementSpeedBonus 
-@configurable real movementSpeedBonusAgiRatio
+// Configurable value indicating how much Hero Inteligence influences Shield power. 
+@configurable real shieldPowerIntRatio
+// Shield duration
+@configurable real shieldDuration
 
 //Creting appropriate Buff GameObject in the editor at comiltetime for our spell
-//Selecting Name, Desctription, Icon and Ability.
+//Selecting Name, Desctription, Icon and visual effect.
 //Name, Description and Icon do not requires explanation, but "Ability" does.
-//Ability in this context is basicy a visual effect attached to the unit while buff is on.
 //"Buffs" Objects do not contain any effects by themselfs, there are just GameObject,
 //that can be attached to the unit to display information about units state.
-//It's odd as fuck, but it is how it works. 
-//It would make more sense if you're doing something by hand inside the editor from an age of 10.
 let MY_BUFF = compiletime(createDummyBuffObject(
-	"My Buff", 
-	"This unit is buffed", 
-	Icons.bTNCurseOff, 
-	Abilities.speedTarget))
+	"Shield", 
+	"This unit is shilded. Will not take any damage.", 
+	Icons.bTNArmorGolem, 
+	Abilities.manaShieldCaster))
+
+//Power calculator
+let powerCalculator = new PowerCalculator()
+..setIntRatio(shieldPowerIntRatio)
+..setBasePower(5)
 
 init
 	print("Hello World")
@@ -37,30 +40,49 @@ init
 	//Creating a mage unit to test a spell
 	let mage = createUnit(Player(0), 'H000', vec2(0, 0), angle(1))
 
-	//Periodicly printing mage speed for debuging and testing purposes
-	doPeriodically(2) (CallbackPeriodic cb) ->
-		print(mage.getMoveSpeed().toString())	
-
-	//Creating calculator to calculate movement speed bonus based on Hero stats 
-	let movementSpeedBonusCalculator = new PowerCalculator()
-
-	//Setting up ratios for calculator
-	movementSpeedBonusCalculator
-	..setAgiRatio(movementSpeedBonusAgiRatio)
-	..setBasePower(5)
-
-	//Calculating movement speed bonus power
-	let spellPower = movementSpeedBonusCalculator.calculatePower(mage)
-
-	//Creating an effect that will be attached to caster unit upon casting a spell
-	let bon = new BonEffect()
-	
-	bon
-	..addBonus(new PercentageMoveSpeedBonus(spellPower))
-	..setDuration(12)
+	//Creates a BonEffect (Collection of bonusses that can be applied to an unit).
+	//BonEffect can contain multiple bonuses (ex. Shield + MovementSpeedBonus etc.)
+	let bonEffect = new BonEffect()
 	..setBuff(MY_BUFF)
+	..setDuration(shieldDuration)
+	..setStackability(BonStackability.DO_NOT_STACK)
 
+	//ShieldBonus that will be added to BonEffect.
+	//When shield is broaken whole BonEffect should be canceled, otherwise visual effect will remain even after shield break. 
+	//It would also prevent caster from geining another shield unless BonEffect Expiries (DO_NOT_STACK option)
+	let shieldBonus = new ShieldBonus(powerCalculator.calculatePower(mage))
+	..onShieldBroaken() (unit bonusTarget) ->
+		bonusTarget.cancelBonEffect(bonEffect)
 
+	bonEffect.addBonus(shieldBonus)
+	
 	//Adding effect to a spell with certaing spell ID
 	EventListener.onPointCast('A000') (unit caster, vec2 target) ->
-		caster.aplyBonEffect(bon)
+		caster.aplyBonEffect(bonEffect)
+
+	//Normally creating bonus to BonEffect can be done inside addBonus call, however adding events handlers is not possible inside other function call.
+	//(ShieldBonus is the only Bonus that cane have event handler so far)
+	//
+	//Ex (POSSIBLE):
+	//bonEffect
+	//..addBonus(new ShieldBonus(10))
+	//
+	//EX (Syntax Error)
+	//bonEffect
+	//..addBonus(
+	//	new ShieldBonus(10)
+	//	..onShieldBroaken() (unit bonusTarget) ->
+	//		bonusTarget.cancelBonEffect(bonEffect)
+	//)
+	//Ex (Generally possible, but not in that context (cyclic symbol evocation (bonEffect)))
+	//bonEffect
+	//..addBonus(
+	//	new ShieldBonus(10)
+	//	..onShieldBroaken( (unit bonusTarget) -> bonusTarget.cancelBonEffect(bonEffect) )
+	//)
+	//Ex (POSSIBLE)
+	//bonEffect
+	//..addBonus(
+	//	new ShieldBonus(10)
+	//	..onShieldBroaken( (unit bonusTarget) -> print("DUPA") )
+	//)

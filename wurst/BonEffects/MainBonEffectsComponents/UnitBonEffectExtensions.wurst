@@ -23,8 +23,17 @@ public function unit.getBonEffectStackCount(BonEffect bon) returns int
     return bon.getStackCount(this)
 
 /**
-Removes BonEffect from unit. 
-It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired
+Removes BonEffect from unit (all of its stacks). 
+It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired.
+Returns false when unit was not under BonEffect and there was nothng to be dispelled, true otherwise.
 */
-public function unit.dispellBonEffect(BonEffect bon)
-    bon.dispellBonEffect(this)
+public function unit.dispellBonEffect(BonEffect bon) returns boolean
+    return bon.dispellBonEffect(this)
+
+/**
+Removes BonEffect from unit (all of its stacks). 
+It will not trigger any BonEffect events.
+Returns false when unit was not under BonEffect and there was nothng to be canceled, true otherwise.
+*/
+public function unit.cancelBonEffect(BonEffect bon) returns boolean
+    return bon.cancelBonEffect(this)

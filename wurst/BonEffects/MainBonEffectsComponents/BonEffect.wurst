@@ -113,19 +113,31 @@ public class BonEffect
             return result
 
     /**
-    Removes BonEffect from unit. 
-    It will trigger onDispelled Event but will not trigger onStackExpired() nor onBonExpired()
+    Removes BonEffect from unit (all of its stacks). 
+    It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired.
+    Returns false when unit was not under BonEffect and there was nothng to be dispelled, true otherwise.
     */
-    function dispellBonEffect(unit u)
-        if not bonMap.has(u)
-            return
-        let bonInstances = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
+    function dispellBonEffect(unit u) returns boolean
+        let bonEffectCanceleResult = this.cancelBonEffect(u)
+        if bonEffectCanceleResult == true
+            this.onBonDispelledHandler.handleEvent(u, this)
+        return bonEffectCanceleResult
+
+    /**
+    Removes BonEffect from unit (all of its stacks). 
+    It will not trigger any BonEffect events.
+    Returns false when unit was not under BonEffect and there was nothng to be canceled, true otherwise.
+    */
+    function cancelBonEffect(unit u) returns boolean
+        let bonInstances = this.getInstancesAttachedToUnit(u)
+        if bonInstances == null
+            return false
         for instance in bonInstances
             instance.dispell(u)
             clearBonEffectInstance(u, instance)
         u.removeAbility(this.bonBuff.abilId)
         destroy bonInstances
-        this.onBonDispelledHandler.handleEvent(u, this)
+        return true
 
     //------- REGION: HELPERS -----------
     /**
