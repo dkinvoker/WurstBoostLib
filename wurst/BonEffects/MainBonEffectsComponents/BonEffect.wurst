@@ -6,7 +6,6 @@ import ClosureTimers
 import BuffObjEditing
 import BonStackability
 import HashMap
-import ErrorHandling
 import initlater BonEffectInstance
 
 /**
@@ -32,7 +31,7 @@ public class BonEffect
     private real duration = 1
     private buffTuple bonBuff
     private int maxStackCout = 25
-    private BonStackability stackability = BonStackability.REFRESH
+    private BonStackability stackability = BonStackability.REAPPLY
 
     private BonEventHandler onStackExpiredHandler = null
     private BonEventHandler onBonExpiredHandler = null
@@ -47,7 +46,7 @@ public class BonEffect
     
     function getMaxStackCout() returns int
         switch this.stackability
-            case DO_NOT_STACK | REFRESH
+            case DO_NOT_STACK | REAPPLY
                 return 1
             case NO_OVERHEAD
                 return INT_MIN
@@ -100,12 +99,12 @@ public class BonEffect
     BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
     */
     function getStackCount(unit u) returns int
-        if not bonMap.has(u)
+        let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
+        if instancesAttachedToUnit == null
             return 0
         else
-            let filteredList = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
-            let result = filteredList.size()
-            destroy filteredList
+            let result = instancesAttachedToUnit.size()
+            destroy instancesAttachedToUnit
             return result
 
     function dispellBonEffect(unit u)
@@ -114,7 +113,8 @@ public class BonEffect
         let bonInstances = bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
         for instance in bonInstances
             instance.dispell(u)
-            destroyBonEffectInstance(u, instance)
+            clearBonEffectInstance(u, instance)
+        u.removeAbility(this.bonBuff.abilId)
         destroy bonInstances
         this.onBonDispelledHandler.handleEvent(u, this)
 
@@ -126,39 +126,74 @@ public class BonEffect
         bonMap.get(u).add(result)
         return result
 
-    private function destroyBonEffectInstance(unit u, BonEffectInstance instance)
+    private function clearBonEffectInstance(unit u, BonEffectInstance instance)
         let unitBons = bonMap.get(u)..remove(instance)
         destroy instance
         if unitBons.size() == 0
             bonMap.remove(u)
 
+    private function applyAllBonusesAndRegisterBonEffect(unit u) returns BonEffectInstance
+        let bonusInstances = new LinkedList<BonusInstance>()
+        for bonus in this.bonuses
+            bonusInstances.add(bonus.applyBonus(u))
+        u.addAbility(this.bonBuff.abilId)
+        return this.registerBonEffectInstance(u, bonusInstances)
+
+    private function getInstancesAttachedToUnit(unit u) returns LinkedList<BonEffectInstance>
+        if not bonMap.has(u)
+            return null
+        else
+            return bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
+
     //------- REGION: APPLING BON --------
 
     private function applyToUnit_STACK(unit u)
-        error("applyToUnit_STACK - Not implemented yet")
+        if this.getStackCount(u) < this.maxStackCout
+            let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
+
+            let bonEndCallback = doAfter(this.duration) -> 
+                if u != null
+                    bonInstance.removeBonuses(u)
+                    clearBonEffectInstance(u, bonInstance)
+                    this.onStackExpiredHandler.handleEvent(u, this)
+                    if not this.isUnitUnderBon(u)
+                        u.removeAbility(this.bonBuff.abilId)
+                        this.onBonExpiredHandler.handleEvent(u, this)
+
+            bonInstance.bindEndOfBonCallback(bonEndCallback)
 
     private function applyToUnit_DO_NOT_STACK(unit u)
-        error("applyToUnit_DO_NOT_STACK - Not implemented yet")
+        if not this.isUnitUnderBon(u)
+            this.applyToUnit_NO_OVERHEAD(u)
 
-    private function applyToUnit_REFRESH(unit u)
-        error("applyToUnit_REFRESH - Not implemented yet")
+    private function applyToUnit_REAPPLY(unit u)
+        let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
+        if instancesAttachedToUnit != null
+            for bonEffectInstance in instancesAttachedToUnit
+                bonEffectInstance.dispell(u)
+                clearBonEffectInstance(u, bonEffectInstance)
+            destroy instancesAttachedToUnit
+        applyToUnit_NO_OVERHEAD(u)
 
-    private function applyToUnit_STACK_AND_REFRESH(unit u)
-        error("applyToUnit_STACK_AND_REFRESH - Not implemented yet")
+    private function applyToUnit_STACK_AND_REAPPLY(unit u)
+        int countOfStackstoApply = 1
+        let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
+        if instancesAttachedToUnit != null
+            countOfStackstoApply += instancesAttachedToUnit.size()
+            for bonEffectInstance in instancesAttachedToUnit
+                bonEffectInstance.dispell(u)
+                clearBonEffectInstance(u, bonEffectInstance)
+            destroy instancesAttachedToUnit
+        for i = 1 to countOfStackstoApply
+            this.applyToUnit_STACK(u)
 
     private function applyToUnit_NO_OVERHEAD(unit u)
-        let bonusInstances = new LinkedList<BonusInstance>()
-        for bonus in bonuses
-            bonusInstances.add(bonus.applyBonus(u))
-        u.addAbility(this.bonBuff.abilId)
-
-        let bonInstance = this.registerBonEffectInstance(u, bonusInstances)
+        let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
 
         let bonEndCallback = doAfter(this.duration) -> 
             if u != null
-                for bonus in bonusInstances 
-                    bonus.removeEffect(u)
-                destroyBonEffectInstance(u, bonInstance)
+                bonInstance.removeBonuses(u)
+                clearBonEffectInstance(u, bonInstance)
                 u.removeAbility(this.bonBuff.abilId)
                 this.onStackExpiredHandler.handleEvent(u, this)
                 this.onBonExpiredHandler.handleEvent(u, this)
@@ -176,10 +211,10 @@ public class BonEffect
                 applyToUnit_STACK(u)
             case DO_NOT_STACK
                 applyToUnit_DO_NOT_STACK(u)
-            case REFRESH
-                applyToUnit_REFRESH(u)
-            case STACK_AND_REFRESH
-                applyToUnit_STACK_AND_REFRESH(u)
+            case REAPPLY
+                applyToUnit_REAPPLY(u)
+            case STACK_AND_REAPPLY
+                applyToUnit_STACK_AND_REAPPLY(u)
             case NO_OVERHEAD
                 applyToUnit_NO_OVERHEAD(u)
 
