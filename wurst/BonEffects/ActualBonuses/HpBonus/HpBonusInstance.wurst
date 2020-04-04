@@ -1,0 +1,12 @@
+package HpBonusInstance
+
+import BonusInstance
+
+public class HpBonusInstance extends BonusInstance
+    private real actualBonusValue
+
+    construct(real bonusValue)
+        this.actualBonusValue = bonusValue
+
+    override function removeEffect(unit u) 
+        u.addHP(-this.actualBonusValue)

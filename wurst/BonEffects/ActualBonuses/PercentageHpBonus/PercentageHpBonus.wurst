@@ -1,0 +1,23 @@
+package PercentageHpBonus
+
+import Bonus
+import BonusInstance
+import HpBonusInstance
+
+/**
+Percentage PercentageHp Bonus
+*/
+public class PercentageHpBonus extends Bonus
+    private real bonusValue = 0
+
+    construct(real percentageValue)
+        this.bonusValue = percentageValue
+
+    function setBonusValue(real percentageValue)
+        this.bonusValue = percentageValue
+
+    override function applyBonus(unit u) returns BonusInstance
+        let hpBeforeBonus = u.getHP()
+        u.addHP(hpBeforeBonus * (this.bonusValue / 100).toInt())
+        let actualBonus = u.getHP() - hpBeforeBonus
+        return new HpBonusInstance(actualBonus)
