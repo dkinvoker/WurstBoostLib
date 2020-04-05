@@ -14,14 +14,14 @@ public class StatusInstance
         this.bonEffect = bon
         this.bonuses = bonuses
 
-    function getBonEffect() returns Status
+    function getStatus() returns Status
         return this.bonEffect
 
     /**
     Attaches callback function that will be called after duration to this BonEffectInstance.
     Remember that callback will be triggered even if not binded with BonEffectInstance, however binding is necessary to no lose its reference, and be able to disable it if needed.
     */
-    function bindEndOfBonCallback(CallbackSingle callback)
+    function bindEndOfStatusCallback(CallbackSingle callback)
         this.endOfBonCallback = callback
 
     /**
@@ -29,7 +29,7 @@ public class StatusInstance
     Do not destroy endOfBonCallback.
     Can be ussed in endOfBonCallback itself.
     */
-    function removeBonuses(unit u)
+    function removeEffects(unit u)
         for bonus in this.bonuses
             bonus.removeEffect(u)
 
@@ -39,7 +39,7 @@ public class StatusInstance
     It would destroy callback during its execution causing errors and wurst memory corruption.
     */
     function dispell(unit u)
-        this.removeBonuses(u)
+        this.removeEffects(u)
         this.abortCallback()
 
     /**

@@ -9,37 +9,37 @@ import HashMap
 import initlater StatusInstance
 
 /**
-Status map to keep track of Status instances (used for stackability pourposes)
+Statuses map to keep track of Status instances (used for stackability pourposes)
 */
-public HashMap<unit, LinkedList<StatusInstance>> bonMap = new HashMap<unit, LinkedList<StatusInstance>>()
+public HashMap<unit, LinkedList<StatusInstance>> statusMap = new HashMap<unit, LinkedList<StatusInstance>>()
 
 /**
-Interface for bon event handling
+Interface for Status event handling
 */
-interface BonEventHandler 
-    abstract function handleEvent(unit bonTarget, Status bonEffect)
+interface StatusEventHandler 
+    abstract function handleEvent(unit statusTarget, Status status)
 
 /**
 Status is container of various effects that can be applied to certain unit
 and automatically vanishes after duration time of Status.
 
-Uses Bonus classes.
-Bonus class can be inherited by your own Bonuses to extend functionality
+Uses StatusEffect classes.
+StatusEffect class can be inherited by your own StatusEffects to extend functionality
 */
 public class Status
-    private LinkedList<StatusEffect> bonuses = new LinkedList<StatusEffect>()
+    private LinkedList<StatusEffect> effects = new LinkedList<StatusEffect>()
     private real duration = 1
-    private buffTuple bonBuff
+    private buffTuple statusBuff
     private int maxStackCout = 25
     private StatusStackability stackability = StatusStackability.REAPPLY
 
-    private BonEventHandler onStackExpiredHandler = null
-    private BonEventHandler onBonExpiredHandler = null
-    private BonEventHandler onBonDispelledHandler = null
+    private StatusEventHandler onStackExpiredHandler = null
+    private StatusEventHandler onStatusExpiredHandler = null
+    private StatusEventHandler onStatusDispelledHandler = null
 
     //--------- REGION: SETTERS AND GETTERS ----------------
     function getBuff() returns buffTuple
-        return this.bonBuff
+        return this.statusBuff
 
     function setMaxStackCout(int maxCount)
         this.maxStackCout = maxCount
@@ -59,8 +59,8 @@ public class Status
                 return this.maxStackCout
 
     /**
-    Sets Bon Stackability.
-    REFREASH is default.
+    Sets Status Stackability.
+    REAPPLY is default.
     Statuses with the same Buff Id are treated as one in terms of stackability.
     */
     function setStackability(StatusStackability stackability)
@@ -79,24 +79,24 @@ public class Status
         this.duration = duration
 
     /**
-    Sets buff that will be used hen Status will be applied to the unit.
+    Sets buff that will be used when Status will be applied to the unit.
     */
     function setBuff(buffTuple bonBuff)
-        this.bonBuff = bonBuff
+        this.statusBuff = bonBuff
 
     //------- REGION: OTHERS ----------
 
     /**
-    Adds new bonus the to Status.
+    Adds new effect the to Status.
     */
-    function addBonus(StatusEffect bonus)
-        this.bonuses.add(bonus)
+    function addEffect(StatusEffect statusEffect)
+        this.effects.add(statusEffect)
 
     /**
-    Returns true if unit has at least one stack of Bon.
-    Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
+    Returns true if unit has at least one stack of Status.
+    Statuses with the same Buff Id are treated as the same Status in terms of stackability.
     */
-    function isUnitUnderBon(unit u) returns boolean
+    function isUnitUnderStatus(unit u) returns boolean
         return this.getStackCount(u) > 0 ? true : false
 
     /**
@@ -114,96 +114,96 @@ public class Status
 
     /**
     Removes Status from unit (all of its stacks). 
-    It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired.
+    It will trigger onDispelled Event but will not trigger onStackExpired nor onStatusExpired.
     Returns false when unit was not under Status and there was nothng to be dispelled, true otherwise.
     */
-    function dispellBonEffect(unit u) returns boolean
-        let bonEffectCanceleResult = this.cancelBonEffect(u)
-        if bonEffectCanceleResult == true
-            this.onBonDispelledHandler.handleEvent(u, this)
-        return bonEffectCanceleResult
+    function dispellStatus(unit u) returns boolean
+        let statusCanceleResult = this.cancelStatus(u)
+        if statusCanceleResult == true
+            this.onStatusDispelledHandler.handleEvent(u, this)
+        return statusCanceleResult
 
     /**
     Removes Status from unit (all of its stacks). 
     It will not trigger any Status events.
     Returns false when unit was not under Status and there was nothng to be canceled, true otherwise.
     */
-    function cancelBonEffect(unit u) returns boolean
-        let bonInstances = this.getInstancesAttachedToUnit(u)
-        if bonInstances == null
+    function cancelStatus(unit u) returns boolean
+        let statusInstances = this.getInstancesAttachedToUnit(u)
+        if statusInstances == null
             return false
-        for instance in bonInstances
+        for instance in statusInstances
             instance.dispell(u)
-            clearBonEffectInstance(u, instance)
-        u.removeAbility(this.bonBuff.abilId)
-        destroy bonInstances
+            clearStatusInstance(u, instance)
+        u.removeAbility(this.statusBuff.abilId)
+        destroy statusInstances
         return true
 
     //------- REGION: HELPERS -----------
     /**
-    Creates BonEffectInstance based on BonusInstances list, and inserts it to bonMap under unit u key.
+    Creates StatusInstance based on StatusEffectsInstances list, and inserts it to statusMap under unit u key.
     */
-    private function registerBonEffectInstance(unit u, LinkedList<StatusEffectInstance> bonuses) returns StatusInstance
-        if not bonMap.has(u)
-            bonMap.put(u, new LinkedList<StatusInstance>())
-        let result = new StatusInstance(this, bonuses)
-        bonMap.get(u).add(result)
+    private function registerStatusInstance(unit u, LinkedList<StatusEffectInstance> effects) returns StatusInstance
+        if not statusMap.has(u)
+            statusMap.put(u, new LinkedList<StatusInstance>())
+        let result = new StatusInstance(this, effects)
+        statusMap.get(u).add(result)
         return result
 
     /**
-    Destroys BonEffectInstance and removes it from bonMap.
+    Destroys StatusInstance and removes it from statusMap.
     */
-    private function clearBonEffectInstance(unit u, StatusInstance instance)
-        let unitBons = bonMap.get(u)..remove(instance)
+    private function clearStatusInstance(unit u, StatusInstance instance)
+        let unitStatuses = statusMap.get(u)..remove(instance)
         destroy instance
-        if unitBons.size() == 0
-            bonMap.remove(u)
+        if unitStatuses.size() == 0
+            statusMap.remove(u)
 
     /**
-    Applys all of Bonuses to unit u, and returns registered BonEffectInstance
+    Applys all of StatusEffects to unit u, and returns registered StatusInstance
     */
-    private function applyAllBonusesAndRegisterBonEffect(unit u) returns StatusInstance
-        let bonusInstances = new LinkedList<StatusEffectInstance>()
-        for bonus in this.bonuses
-            bonusInstances.add(bonus.applyBonus(u))
-        u.addAbility(this.bonBuff.abilId)
-        return this.registerBonEffectInstance(u, bonusInstances)
+    private function applyAllEffectsAndRegisterStatus(unit u) returns StatusInstance
+        let effectsInstances = new LinkedList<StatusEffectInstance>()
+        for statusEffect in this.effects
+            effectsInstances.add(statusEffect.applyBonus(u))
+        u.addAbility(this.statusBuff.abilId)
+        return this.registerStatusInstance(u, effectsInstances)
 
     /**
     Gets new LinkedList that contains all instances of this Status applied to unit u.
     Status with the same buffId are considered the same Status.
     */
     private function getInstancesAttachedToUnit(unit u) returns LinkedList<StatusInstance>
-        if not bonMap.has(u)
+        if not statusMap.has(u)
             return null
         else
-            return bonMap.get(u).filter( (StatusInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
+            return statusMap.get(u).filter( (StatusInstance t) -> t.getStatus().statusBuff.buffId == this.statusBuff.buffId )
 
-    //------- REGION: APPLING BON --------
+    //------- REGION: APPLING STATUS --------
 
     /**
     Handles Status appling for STACK stackability option.
     */
     private function applyToUnit_STACK(unit u)
         if this.getStackCount(u) < this.maxStackCout
-            let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
+            let statusInstance = this.applyAllEffectsAndRegisterStatus(u)
 
-            let bonEndCallback = doAfter(this.duration) -> 
+            let statusEndCallback = doAfter(this.duration) -> 
                 if u != null
-                    bonInstance.removeBonuses(u)
-                    clearBonEffectInstance(u, bonInstance)
+                    statusInstance.removeEffects(u)
+                    clearStatusInstance(u, statusInstance)
                     this.onStackExpiredHandler.handleEvent(u, this)
-                    if not this.isUnitUnderBon(u)
-                        u.removeAbility(this.bonBuff.abilId)
-                        this.onBonExpiredHandler.handleEvent(u, this)
+                    if not this.isUnitUnderStatus(u)
+                        u.removeAbility(this.statusBuff.abilId)
+                        this.onStatusExpiredHandler.handleEvent(u, this)
 
-            bonInstance.bindEndOfBonCallback(bonEndCallback)
+            statusInstance.bindEndOfStatusCallback(statusEndCallback)
 
     /**
     Handles Status appling for DO_NOT_STACK stackability option.
     */
     private function applyToUnit_DO_NOT_STACK(unit u)
-        if not this.isUnitUnderBon(u)
+        if not this.isUnitUnderStatus(u)
             this.applyToUnit_NO_OVERHEAD(u)
 
     /**
@@ -212,9 +212,9 @@ public class Status
     private function applyToUnit_REAPPLY(unit u)
         let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
         if instancesAttachedToUnit != null
-            for bonEffectInstance in instancesAttachedToUnit
-                bonEffectInstance.dispell(u)
-                clearBonEffectInstance(u, bonEffectInstance)
+            for statusInstance in instancesAttachedToUnit
+                statusInstance.dispell(u)
+                clearStatusInstance(u, statusInstance)
             destroy instancesAttachedToUnit
         applyToUnit_NO_OVERHEAD(u)
 
@@ -222,37 +222,37 @@ public class Status
     Handles Status appling for STACK_AND_REAPPLY stackability option.
     */
     private function applyToUnit_STACK_AND_REAPPLY(unit u)
-        int countOfStackstoApply = 1
+        int countOfStacksToApply = 1
         let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
         if instancesAttachedToUnit != null
-            countOfStackstoApply += instancesAttachedToUnit.size()
-            for bonEffectInstance in instancesAttachedToUnit
-                bonEffectInstance.dispell(u)
-                clearBonEffectInstance(u, bonEffectInstance)
+            countOfStacksToApply += instancesAttachedToUnit.size()
+            for statusInstance in instancesAttachedToUnit
+                statusInstance.dispell(u)
+                clearStatusInstance(u, statusInstance)
             destroy instancesAttachedToUnit
-        for i = 1 to countOfStackstoApply
+        for i = 1 to countOfStacksToApply
             this.applyToUnit_STACK(u)
 
     /**
     Handles Status appling for NO_OVERHEAD stackability option.
     */
     private function applyToUnit_NO_OVERHEAD(unit u)
-        let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
+        let statusInstance = this.applyAllEffectsAndRegisterStatus(u)
 
-        let bonEndCallback = doAfter(this.duration) -> 
+        let statusEndCallback = doAfter(this.duration) -> 
             if u != null
-                bonInstance.removeBonuses(u)
-                clearBonEffectInstance(u, bonInstance)
-                u.removeAbility(this.bonBuff.abilId)
+                statusInstance.removeEffects(u)
+                clearStatusInstance(u, statusInstance)
+                u.removeAbility(this.statusBuff.abilId)
                 this.onStackExpiredHandler.handleEvent(u, this)
-                this.onBonExpiredHandler.handleEvent(u, this)
+                this.onStatusExpiredHandler.handleEvent(u, this)
                     
-        bonInstance.bindEndOfBonCallback(bonEndCallback)
+        statusInstance.bindEndOfStatusCallback(statusEndCallback)
            
 
     /**
-    Applys all of the Bonuses to the unit and sets up Buff for that unit.
-    After Duration Time of the Status all bonuses and Buff will be removed.
+    Applys all of the Effects to the unit and sets up Buff for that unit.
+    After Duration Time of the Status all effects and Buff will be removed.
     */
     function applyToUnit(unit u)
         switch this.stackability
@@ -272,7 +272,7 @@ public class Status
     /**
     Sets handler to be called after each stack expiries.
     */
-    function onStackExpired(BonEventHandler handler)
+    function onStackExpired(StatusEventHandler handler)
         //Clear previous event handler
         if this.onStackExpiredHandler != null
             destroy this.onStackExpiredHandler
@@ -281,29 +281,31 @@ public class Status
     /**
     Sets handler to be called after all stacks expiries.
     */
-    function onBonExpired(BonEventHandler handler)
+    function onStatusExpired(StatusEventHandler handler)
         //Clear previous event handler
-        if this.onBonExpiredHandler != null
-            destroy this.onBonExpiredHandler
-        this.onBonExpiredHandler = handler
+        if this.onStatusExpiredHandler != null
+            destroy this.onStatusExpiredHandler
+        this.onStatusExpiredHandler = handler
 
     /**
-    Sets handler to be called after bon is dispelled.
+    Sets handler to be called after status is dispelled.
     */
-    function onBonDispelled(BonEventHandler handler)
+    function onStatusDispelled(StatusEventHandler handler)
         //Clear previous event handler
-        if this.onBonDispelledHandler != null
-            destroy this.onBonDispelledHandler
-        this.onBonDispelledHandler = handler
+        if this.onStatusDispelledHandler != null
+            destroy this.onStatusDispelledHandler
+        this.onStatusDispelledHandler = handler
 
     //------ REGION: DESTRUCTOR ------        
 
     ondestroy
-        for bonus in this.bonuses
-            destroy bonus
-        destroy bonuses
+        for statusEffect in this.effects
+            destroy statusEffect
+        destroy this.effects
         if this.onStackExpiredHandler != null
             destroy this.onStackExpiredHandler
-        if this.onBonExpiredHandler != null
-            destroy onBonExpiredHandler
+        if this.onStatusExpiredHandler != null
+            destroy this.onStatusExpiredHandler
+        if this.onStatusDispelledHandler != null
+            destroy this.onStatusDispelledHandler
 

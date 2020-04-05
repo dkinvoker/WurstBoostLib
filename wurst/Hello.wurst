@@ -54,7 +54,7 @@ init
 	..onShieldBroaken() (unit bonusTarget) ->
 		bonusTarget.cancelBonEffect(bonEffect)
 
-	bonEffect.addBonus(shieldBonus)
+	bonEffect.addEffect(shieldBonus)
 	
 	//Adding effect to a spell with certaing spell ID
 	EventListener.onPointCast('A000') (unit caster, vec2 target) ->

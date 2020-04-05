@@ -13,7 +13,7 @@ Returns true if unit is under at least one stack of Status.
 Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
 */
 public function unit.isUnderBonEffect(Status bon) returns boolean
-    return bon.isUnitUnderBon(this)
+    return bon.isUnitUnderStatus(this)
 
 /**
 Returns stack count of specific Status.
@@ -28,7 +28,7 @@ It will trigger onDispelled Event but will not trigger onStackExpired nor onBonE
 Returns false when unit was not under Status and there was nothng to be dispelled, true otherwise.
 */
 public function unit.dispellBonEffect(Status bon) returns boolean
-    return bon.dispellBonEffect(this)
+    return bon.dispellStatus(this)
 
 /**
 Removes Status from unit (all of its stacks). 
@@ -36,4 +36,4 @@ It will not trigger any Status events.
 Returns false when unit was not under Status and there was nothng to be canceled, true otherwise.
 */
 public function unit.cancelBonEffect(Status bon) returns boolean
-    return bon.cancelBonEffect(this)
+    return bon.cancelStatus(this)
