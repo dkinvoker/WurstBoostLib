@@ -2,7 +2,7 @@ package Statuses
 
 import public Status
 import public BonStackability
-import public UnitBonEffectExtensions
+import public UnitStatusExtensions
 
 import public MoveSpeedBonus
 import public PercentageMoveSpeedBonus

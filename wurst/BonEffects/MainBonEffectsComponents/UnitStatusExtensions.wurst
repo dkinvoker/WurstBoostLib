@@ -1,4 +1,4 @@
-package UnitBonEffectExtensions
+package UnitStatusExtensions
 
 import Status
 
