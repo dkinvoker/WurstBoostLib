@@ -45,7 +45,7 @@ init
 	let bonEffect = new Status()
 	..setBuff(MY_BUFF)
 	..setDuration(shieldDuration)
-	..setStackability(BonStackability.DO_NOT_STACK)
+	..setStackability(StatusStackability.DO_NOT_STACK)
 
 	//ShieldBonus that will be added to BonEffect.
 	//When shield is broaken whole BonEffect should be canceled, otherwise visual effect will remain even after shield break. 

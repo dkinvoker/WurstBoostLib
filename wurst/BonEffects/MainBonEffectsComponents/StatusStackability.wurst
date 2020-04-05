@@ -1,4 +1,4 @@
-package BonStackability
+package StatusStackability
 
 /**
 BonStackability Options
@@ -11,7 +11,7 @@ REAPPLY (default) - If unit is under BonEffect, appling the same Bon, will delet
 STACK_AND_REAPPLY - Bon will stack. All existing stacks of incoming Bon will be deleted and reapplyd.
 NO_OVERHEAD - System do not track stackability. Has less performance overhead, but stacking behavior is unddefinied.
 */
-public enum BonStackability
+public enum StatusStackability
     STACK
     DO_NOT_STACK
     REAPPLY

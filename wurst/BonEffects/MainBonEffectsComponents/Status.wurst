@@ -4,7 +4,7 @@ import BonusInstance
 import Bonus
 import ClosureTimers
 import BuffObjEditing
-import BonStackability
+import StatusStackability
 import HashMap
 import initlater StatusInstance
 
@@ -31,7 +31,7 @@ public class Status
     private real duration = 1
     private buffTuple bonBuff
     private int maxStackCout = 25
-    private BonStackability stackability = BonStackability.REAPPLY
+    private StatusStackability stackability = StatusStackability.REAPPLY
 
     private BonEventHandler onStackExpiredHandler = null
     private BonEventHandler onBonExpiredHandler = null
@@ -63,13 +63,13 @@ public class Status
     REFREASH is default.
     Statuses with the same Buff Id are treated as one in terms of stackability.
     */
-    function setStackability(BonStackability stackability)
+    function setStackability(StatusStackability stackability)
         this.stackability = stackability
 
     /**
     Returns current stackability option
     */
-    function getStackability() returns BonStackability
+    function getStackability() returns StatusStackability
         return this.stackability
     
     /**

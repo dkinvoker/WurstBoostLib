@@ -1,7 +1,7 @@
 package Statuses
 
 import public Status
-import public BonStackability
+import public StatusStackability
 import public UnitStatusExtensions
 
 import public MoveSpeedBonus
