@@ -52,13 +52,13 @@ init
 	//It would also prevent caster from geining another shield unless Status Expiries (DO_NOT_STACK option)
 	let shieldBonus = new ShieldBonus(powerCalculator.calculatePower(mage))
 	..onShieldBroaken() (unit bonusTarget) ->
-		bonusTarget.cancelBonEffect(bonEffect)
+		bonusTarget.cancelStatus(bonEffect)
 
 	bonEffect.addEffect(shieldBonus)
 	
 	//Adding effect to a spell with certaing spell ID
 	EventListener.onPointCast('A000') (unit caster, vec2 target) ->
-		caster.aplyBonEffect(bonEffect)
+		caster.aplyStatus(bonEffect)
 
 	//Normally creating bonus to Status can be done inside addBonus call, however adding events handlers is not possible inside other function call.
 	//(ShieldBonus is the only Bonus that cane have event handler so far)
