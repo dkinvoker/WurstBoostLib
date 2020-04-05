@@ -1,6 +1,6 @@
 package Statuses
 
-import public BonEffect
+import public Status
 import public BonStackability
 import public UnitBonEffectExtensions
 

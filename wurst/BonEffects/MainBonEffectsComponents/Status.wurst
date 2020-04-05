@@ -1,4 +1,4 @@
-package BonEffect
+package Status
 import LinkedList
 import BonusInstance
 import Bonus
@@ -17,7 +17,7 @@ public HashMap<unit, LinkedList<BonEffectInstance>> bonMap = new HashMap<unit, L
 Interface for bon event handling
 */
 interface BonEventHandler 
-    abstract function handleEvent(unit bonTarget, BonEffect bonEffect)
+    abstract function handleEvent(unit bonTarget, Status bonEffect)
 
 /**
 BonEffect is container of various effects that can be applied to certain unit
@@ -26,7 +26,7 @@ and automatically vanishes after duration time of BonEffect.
 Uses Bonus classes.
 Bonus class can be inherited by your own Bonuses to extend functionality
 */
-public class BonEffect
+public class Status
     private LinkedList<Bonus> bonuses = new LinkedList<Bonus>()
     private real duration = 1
     private buffTuple bonBuff

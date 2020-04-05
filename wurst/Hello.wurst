@@ -42,7 +42,7 @@ init
 
 	//Creates a BonEffect (Collection of bonusses that can be applied to an unit).
 	//BonEffect can contain multiple bonuses (ex. Shield + MovementSpeedBonus etc.)
-	let bonEffect = new BonEffect()
+	let bonEffect = new Status()
 	..setBuff(MY_BUFF)
 	..setDuration(shieldDuration)
 	..setStackability(BonStackability.DO_NOT_STACK)
