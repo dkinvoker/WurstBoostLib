@@ -1,7 +1,7 @@
 package IntBonus
 
 import StatusEffect
-import BonusInstance
+import StatusEffectInstance
 import IntBonusInstance
 
 public class IntBonus extends StatusEffect
@@ -13,7 +13,7 @@ public class IntBonus extends StatusEffect
     function setBonusValue(int value)
         this.bonusValue = value
 
-    override function applyBonus(unit u) returns BonusInstance
+    override function applyBonus(unit u) returns StatusEffectInstance
         let intBeforeBonus = u.getInt(true)
         u.addInt(this.bonusValue)
         let actualBonus = u.getInt(true) - intBeforeBonus

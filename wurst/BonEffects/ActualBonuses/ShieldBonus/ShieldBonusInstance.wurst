@@ -1,9 +1,9 @@
 package ShieldBonusInstance
 
-import BonusInstance
+import StatusEffectInstance
 import DamageEvent
 
-public class ShieldBonusInstance extends BonusInstance
+public class ShieldBonusInstance extends StatusEffectInstance
 
     private real remainingShield = 0
     private DamageListener damageEventListener

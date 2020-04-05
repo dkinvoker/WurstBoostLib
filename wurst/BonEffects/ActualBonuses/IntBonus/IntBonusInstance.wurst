@@ -1,8 +1,8 @@
 package IntBonusInstance
 
-import BonusInstance
+import StatusEffectInstance
 
-public class IntBonusInstance extends BonusInstance
+public class IntBonusInstance extends StatusEffectInstance
     private int actualBonusValue
 
     construct(int bonusValue)

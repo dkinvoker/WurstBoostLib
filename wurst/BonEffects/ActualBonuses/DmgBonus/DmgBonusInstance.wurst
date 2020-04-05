@@ -1,8 +1,8 @@
 package DmgBonusInstance
 
-import BonusInstance
+import StatusEffectInstance
 
-public class DmgBonusInstance extends BonusInstance
+public class DmgBonusInstance extends StatusEffectInstance
     private int bonusValue = 0
     private int weaponIndex = 0
 

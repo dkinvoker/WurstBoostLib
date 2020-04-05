@@ -1,8 +1,8 @@
 package AgiBonusInstance
 
-import BonusInstance
+import StatusEffectInstance
 
-public class AgiBonusInstance extends BonusInstance
+public class AgiBonusInstance extends StatusEffectInstance
     private int bonusValue = 0
 
     construct(int actualBonusValue)

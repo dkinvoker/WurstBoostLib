@@ -1,7 +1,7 @@
 package PercentageMoveSpeedBonus
 
 import StatusEffect
-import BonusInstance
+import StatusEffectInstance
 import MoveSpeedBonusInstance
 
 /**
@@ -16,7 +16,7 @@ public class PercentageMoveSpeedBonus extends StatusEffect
     function setBonusValue(real percentageValue)
         this.bonusValue = percentageValue
 
-    override function applyBonus(unit u) returns BonusInstance
+    override function applyBonus(unit u) returns StatusEffectInstance
         let moveSpeedBeforeBonus = u.getMoveSpeed()
         u.setMoveSpeed(moveSpeedBeforeBonus + moveSpeedBeforeBonus * (this.bonusValue / 100.0))
         let actualBonus = u.getMoveSpeed() - moveSpeedBeforeBonus

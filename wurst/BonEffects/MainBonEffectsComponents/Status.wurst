@@ -1,6 +1,6 @@
 package Status
 import LinkedList
-import BonusInstance
+import StatusEffectInstance
 import StatusEffect
 import ClosureTimers
 import BuffObjEditing
@@ -143,7 +143,7 @@ public class Status
     /**
     Creates BonEffectInstance based on BonusInstances list, and inserts it to bonMap under unit u key.
     */
-    private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns StatusInstance
+    private function registerBonEffectInstance(unit u, LinkedList<StatusEffectInstance> bonuses) returns StatusInstance
         if not bonMap.has(u)
             bonMap.put(u, new LinkedList<StatusInstance>())
         let result = new StatusInstance(this, bonuses)
@@ -163,7 +163,7 @@ public class Status
     Applys all of Bonuses to unit u, and returns registered BonEffectInstance
     */
     private function applyAllBonusesAndRegisterBonEffect(unit u) returns StatusInstance
-        let bonusInstances = new LinkedList<BonusInstance>()
+        let bonusInstances = new LinkedList<StatusEffectInstance>()
         for bonus in this.bonuses
             bonusInstances.add(bonus.applyBonus(u))
         u.addAbility(this.bonBuff.abilId)

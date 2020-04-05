@@ -1,5 +1,5 @@
 package StatusEffect
-import BonusInstance
+import StatusEffectInstance
 
 /**
 Abstract Bonus class that can be inherited by your own bonuses.
@@ -12,4 +12,4 @@ public abstract class StatusEffect
     Let BonEffect handle this instead.
     If implemented in child class it must return BonusInstance to allow bonus removing
     */
-    abstract function applyBonus(unit u) returns BonusInstance
+    abstract function applyBonus(unit u) returns StatusEffectInstance

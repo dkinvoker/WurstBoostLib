@@ -1,8 +1,8 @@
-package BonusInstance
+package StatusEffectInstance
 
 /**
 Abstract BonusInstance class that can be inherited by your own bonuses.
 Requires to implement one method that takes unit and modifies it (removes previously added bonus).
 */
-public abstract class BonusInstance
+public abstract class StatusEffectInstance
     abstract function removeEffect(unit u)

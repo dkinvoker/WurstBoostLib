@@ -1,8 +1,8 @@
 package HpBonusInstance
 
-import BonusInstance
+import StatusEffectInstance
 
-public class HpBonusInstance extends BonusInstance
+public class HpBonusInstance extends StatusEffectInstance
     private real actualBonusValue
 
     construct(real bonusValue)

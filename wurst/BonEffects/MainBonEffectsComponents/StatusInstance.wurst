@@ -1,16 +1,16 @@
 package StatusInstance
 
 import LinkedList
-import BonusInstance
+import StatusEffectInstance
 import Status
 import ClosureTimers
 
 public class StatusInstance
-    private LinkedList<BonusInstance> bonuses = new LinkedList<BonusInstance>()
+    private LinkedList<StatusEffectInstance> bonuses = new LinkedList<StatusEffectInstance>()
     private Status bonEffect
     private CallbackSingle endOfBonCallback
 
-    construct(Status bon, LinkedList<BonusInstance> bonuses)
+    construct(Status bon, LinkedList<StatusEffectInstance> bonuses)
         this.bonEffect = bon
         this.bonuses = bonuses
 
@@ -49,6 +49,6 @@ public class StatusInstance
         destroy this.endOfBonCallback
 
     ondestroy
-        bonuses.forEach() (BonusInstance t) ->
+        bonuses.forEach() (StatusEffectInstance t) ->
             destroy t
         destroy bonuses

@@ -1,7 +1,7 @@
 package PercentageHpBonus
 
 import StatusEffect
-import BonusInstance
+import StatusEffectInstance
 import HpBonusInstance
 
 /**
@@ -16,7 +16,7 @@ public class PercentageHpBonus extends StatusEffect
     function setBonusValue(real percentageValue)
         this.bonusValue = percentageValue
 
-    override function applyBonus(unit u) returns BonusInstance
+    override function applyBonus(unit u) returns StatusEffectInstance
         let hpBeforeBonus = u.getHP()
         u.addHP(hpBeforeBonus * (this.bonusValue / 100).toInt())
         let actualBonus = u.getHP() - hpBeforeBonus

@@ -1,7 +1,7 @@
 package PercentageIntBonus
 
 import StatusEffect
-import BonusInstance
+import StatusEffectInstance
 import IntBonusInstance
 
 /**
@@ -16,7 +16,7 @@ public class PercentageIntBonus extends StatusEffect
     function setBonusValue(real percentageValue)
         this.bonusValue = percentageValue
 
-    override function applyBonus(unit u) returns BonusInstance
+    override function applyBonus(unit u) returns StatusEffectInstance
         let intBeforeBonus = u.getInt(true)
         u.addInt(intBeforeBonus * (this.bonusValue / 100).toInt())
         let actualBonus = u.getInt(true) - intBeforeBonus

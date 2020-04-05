@@ -1,7 +1,7 @@
 package MoveSpeedBonusInstance
-import BonusInstance
+import StatusEffectInstance
 
-public class MoveSpeedBonusInstance extends BonusInstance
+public class MoveSpeedBonusInstance extends StatusEffectInstance
     private real bonusValue = 0
 
     construct(real actualBonusValue)
