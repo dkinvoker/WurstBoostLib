@@ -1,11 +1,11 @@
-package BonEffectInstance
+package StatusInstance
 
 import LinkedList
 import BonusInstance
 import Status
 import ClosureTimers
 
-public class BonEffectInstance
+public class StatusInstance
     private LinkedList<BonusInstance> bonuses = new LinkedList<BonusInstance>()
     private Status bonEffect
     private CallbackSingle endOfBonCallback

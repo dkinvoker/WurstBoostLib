@@ -6,12 +6,12 @@ import ClosureTimers
 import BuffObjEditing
 import BonStackability
 import HashMap
-import initlater BonEffectInstance
+import initlater StatusInstance
 
 /**
 BonEffect map to keep track of BonEffect instances (used for stackability pourposes)
 */
-public HashMap<unit, LinkedList<BonEffectInstance>> bonMap = new HashMap<unit, LinkedList<BonEffectInstance>>()
+public HashMap<unit, LinkedList<StatusInstance>> bonMap = new HashMap<unit, LinkedList<StatusInstance>>()
 
 /**
 Interface for bon event handling
@@ -143,17 +143,17 @@ public class Status
     /**
     Creates BonEffectInstance based on BonusInstances list, and inserts it to bonMap under unit u key.
     */
-    private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns BonEffectInstance
+    private function registerBonEffectInstance(unit u, LinkedList<BonusInstance> bonuses) returns StatusInstance
         if not bonMap.has(u)
-            bonMap.put(u, new LinkedList<BonEffectInstance>())
-        let result = new BonEffectInstance(this, bonuses)
+            bonMap.put(u, new LinkedList<StatusInstance>())
+        let result = new StatusInstance(this, bonuses)
         bonMap.get(u).add(result)
         return result
 
     /**
     Destroys BonEffectInstance and removes it from bonMap.
     */
-    private function clearBonEffectInstance(unit u, BonEffectInstance instance)
+    private function clearBonEffectInstance(unit u, StatusInstance instance)
         let unitBons = bonMap.get(u)..remove(instance)
         destroy instance
         if unitBons.size() == 0
@@ -162,7 +162,7 @@ public class Status
     /**
     Applys all of Bonuses to unit u, and returns registered BonEffectInstance
     */
-    private function applyAllBonusesAndRegisterBonEffect(unit u) returns BonEffectInstance
+    private function applyAllBonusesAndRegisterBonEffect(unit u) returns StatusInstance
         let bonusInstances = new LinkedList<BonusInstance>()
         for bonus in this.bonuses
             bonusInstances.add(bonus.applyBonus(u))
@@ -173,11 +173,11 @@ public class Status
     Gets new LinkedList that contains all instances of this BonEffect applied to unit u.
     BonEffect with the same buffId are considered the same BonEffect.
     */
-    private function getInstancesAttachedToUnit(unit u) returns LinkedList<BonEffectInstance>
+    private function getInstancesAttachedToUnit(unit u) returns LinkedList<StatusInstance>
         if not bonMap.has(u)
             return null
         else
-            return bonMap.get(u).filter( (BonEffectInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
+            return bonMap.get(u).filter( (StatusInstance t) -> t.getBonEffect().bonBuff.buffId == this.bonBuff.buffId )
 
     //------- REGION: APPLING BON --------
 
