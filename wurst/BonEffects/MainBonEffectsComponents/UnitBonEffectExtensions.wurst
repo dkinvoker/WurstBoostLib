@@ -10,14 +10,14 @@ public function unit.aplyBonEffect(BonEffect bon)
 
 /**
 Returns true if unit is under at least one stack of BonEffect.
-BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
+Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
 */
 public function unit.isUnderBonEffect(BonEffect bon) returns boolean
     return bon.isUnitUnderBon(this)
 
 /**
 Returns stack count of specific BonEffect.
-BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
+Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
 */
 public function unit.getBonEffectStackCount(BonEffect bon) returns int
     return bon.getStackCount(this)

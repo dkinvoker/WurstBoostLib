@@ -1,4 +1,4 @@
-package BonEffects
+package Statuses
 
 import public BonEffect
 import public BonStackability

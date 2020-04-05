@@ -61,7 +61,7 @@ public class BonEffect
     /**
     Sets Bon Stackability.
     REFREASH is default.
-    BonEffects with the same Buff Id are treated as one in terms of stackability.
+    Statuses with the same Buff Id are treated as one in terms of stackability.
     */
     function setStackability(BonStackability stackability)
         this.stackability = stackability
@@ -94,14 +94,14 @@ public class BonEffect
 
     /**
     Returns true if unit has at least one stack of Bon.
-    BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
+    Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
     */
     function isUnitUnderBon(unit u) returns boolean
         return this.getStackCount(u) > 0 ? true : false
 
     /**
     Returns count of stacks that specific unit has.
-    BonEffects with the same Buff Id are treated as the same Bon in terms of stackability.
+    Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
     */
     function getStackCount(unit u) returns int
         let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
