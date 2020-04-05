@@ -1,0 +1,23 @@
+package PercentageIntPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import PercentageIntBonus
+
+/**
+Percentage Int panalty.
+*/
+public class PercentageIntPanalty extends StatusEffect
+    private real panaltyValue = 0
+
+    construct(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    function setPanaltyValue(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new PercentageIntBonus(-this.panaltyValue)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance

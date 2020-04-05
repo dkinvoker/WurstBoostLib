@@ -1,0 +1,23 @@
+package StrPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import StrBonus
+
+/**
+Fixed Str panalty.
+*/
+public class StrPanalty extends StatusEffect
+    private int panaltyValue = 0
+
+    construct(int panaltyValue)
+        this.panaltyValue = panaltyValue
+
+    function setPanaltyValue(int panaltyValue)
+        this.panaltyValue = panaltyValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new StrBonus(-this.panaltyValue)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance

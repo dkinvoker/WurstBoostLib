@@ -1,0 +1,31 @@
+package DmgPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import DmgBonus
+
+/**
+Fixed DMG panalty for specifict weapon
+*/
+public class DmgPanalty extends StatusEffect
+    private int panaltyValue = 0
+    private int weaponIndex = 0
+
+    construct(int panaltyValue)
+        this.panaltyValue = panaltyValue
+
+    construct(int panaltyValue, int weaponIndex)
+        this.panaltyValue = panaltyValue
+        this.weaponIndex = weaponIndex
+
+    function setPanaltyValue(int bonusValue)
+        this.panaltyValue = bonusValue
+
+    function setWeaponIndex(int index)
+        this.weaponIndex = index
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new DmgBonus(-this.panaltyValue, this.weaponIndex)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance

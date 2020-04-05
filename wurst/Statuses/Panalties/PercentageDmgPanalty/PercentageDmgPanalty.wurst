@@ -1,0 +1,31 @@
+package PercentageDmgPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import PercentageDmgBonus
+
+/**
+Percentage DMG panalty for specifict weapon
+*/
+public class PercentageDmgPanalty extends StatusEffect
+    private real panaltyValue = 0
+    private int weaponIndex = 0
+
+    construct(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    construct(real percentageValue, int weaponIndex)
+        this.panaltyValue = percentageValue
+        this.weaponIndex = weaponIndex
+
+    function setPanaltyValue(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    function setWeaponIndex(int index)
+        this.weaponIndex = index
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new PercentageDmgBonus(-this.panaltyValue, this.weaponIndex)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance

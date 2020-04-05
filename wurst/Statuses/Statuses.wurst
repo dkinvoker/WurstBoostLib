@@ -15,3 +15,14 @@ import public PercentageStrBonus
 import public IntBonus
 import public PercentageIntBonus
 import public ShieldBonus
+
+import public AgiPanalty
+import public DmgPanalty
+import public IntPanalty
+import public MoveSpeedPanalty
+import public PercentageAgiPanalty
+import public PercentageDmgPanalty
+import public PercentageIntPanalty
+import public PercentageMoveSpeedPanalty
+import public PercentageStrPanalty
+import public StrPanalty

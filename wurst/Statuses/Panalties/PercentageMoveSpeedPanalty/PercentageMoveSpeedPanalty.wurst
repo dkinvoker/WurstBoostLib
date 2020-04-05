@@ -1,0 +1,23 @@
+package PercentageMoveSpeedPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import PercentageMoveSpeedBonus
+
+/**
+Percentage Move speed panalty.
+*/
+public class PercentageMoveSpeedPanalty extends StatusEffect
+    private real panaltyValue = 0
+
+    construct(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    function setPanaltyValue(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new PercentageMoveSpeedBonus(-this.panaltyValue)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance

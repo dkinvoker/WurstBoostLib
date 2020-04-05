@@ -1,0 +1,23 @@
+package MoveSpeedPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import MoveSpeedBonus
+
+/**
+Fixed Move speed panalty.
+*/
+public class MoveSpeedPanalty extends StatusEffect
+    private real panaltyValue = 0
+
+    construct(real panaltyValue)
+        this.panaltyValue = panaltyValue
+
+    function setPanaltyValue(real panaltyValue)
+        this.panaltyValue = panaltyValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new MoveSpeedBonus(-this.panaltyValue)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance

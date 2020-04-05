@@ -1,0 +1,23 @@
+package PercentageAgiPanalty
+
+import StatusEffect
+import StatusEffectInstance
+import PercentageAgiBonus
+
+/**
+Percentage Agi panalty.
+*/
+public class PercentageAgiPanalty extends StatusEffect
+    private real panaltyValue = 0
+
+    construct(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    function setPanaltyValue(real percentageValue)
+        this.panaltyValue = percentageValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonus = new PercentageAgiBonus(-this.panaltyValue)
+        let effectiIstance = bonus.applyEffect(u)
+        destroy bonus
+        return effectiIstance
