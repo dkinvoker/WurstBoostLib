@@ -6,36 +6,36 @@ import Status
 import ClosureTimers
 
 public class StatusInstance
-    private LinkedList<StatusEffectInstance> bonuses = new LinkedList<StatusEffectInstance>()
-    private Status bonEffect
-    private CallbackSingle endOfBonCallback
+    private LinkedList<StatusEffectInstance> effects = new LinkedList<StatusEffectInstance>()
+    private Status status
+    private CallbackSingle endOfStatusCallback
 
-    construct(Status bon, LinkedList<StatusEffectInstance> bonuses)
-        this.bonEffect = bon
-        this.bonuses = bonuses
+    construct(Status status, LinkedList<StatusEffectInstance> effects)
+        this.status = status
+        this.effects = effects
 
     function getStatus() returns Status
-        return this.bonEffect
+        return this.status
 
     /**
-    Attaches callback function that will be called after duration to this BonEffectInstance.
-    Remember that callback will be triggered even if not binded with BonEffectInstance, however binding is necessary to no lose its reference, and be able to disable it if needed.
+    Attaches callback function that will be called after duration to this StatusInstance.
+    Remember that callback will be triggered even if not binded with StatusInstance, however binding is necessary to no lose its reference, and be able to disable it if needed.
     */
     function bindEndOfStatusCallback(CallbackSingle callback)
-        this.endOfBonCallback = callback
+        this.endOfStatusCallback = callback
 
     /**
-    Remove all of BonusInstances from target. 
-    Do not destroy endOfBonCallback.
-    Can be ussed in endOfBonCallback itself.
+    Remove all of StatusEffectInstances from target. 
+    Do not destroy endOfStatusCallback.
+    Can be ussed in endOfStatusCallback itself.
     */
     function removeEffects(unit u)
-        for bonus in this.bonuses
+        for bonus in this.effects
             bonus.removeEffect(u)
 
     /**
-    Remove all of BonusInstances from target, and destroys endOfBonCallback.
-    Cannot be used inside endOfBonCallback function! 
+    Remove all of StatusEffectInstances from target, and destroys endOfStatusCallback.
+    Cannot be used inside endOfStatusCallback function! 
     It would destroy callback during its execution causing errors and wurst memory corruption.
     */
     function dispell(unit u)
@@ -43,12 +43,12 @@ public class StatusInstance
         this.abortCallback()
 
     /**
-    Destroys endOfBonCallback causing it to not be fired.
+    Destroys endOfStatusCallback causing it to not be fired.
     */
     function abortCallback()
-        destroy this.endOfBonCallback
+        destroy this.endOfStatusCallback
 
     ondestroy
-        bonuses.forEach() (StatusEffectInstance t) ->
+        this.effects.forEach() (StatusEffectInstance t) ->
             destroy t
-        destroy bonuses
+        destroy this.effects
