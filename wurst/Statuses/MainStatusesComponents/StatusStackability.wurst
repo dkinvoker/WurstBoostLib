@@ -6,8 +6,8 @@ WARNING!
 Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
 
 STACK - The same Statuses will stack, but will have separate timers, and will expire individually.
-NOT_STACK - If unit is already under BonEffect, the new one will be ignored.
-REAPPLY (default) - If unit is under BonEffect, appling the same Bon, will delete existing one and apply incomming Bon. It do not trigger onBonStackExpiried.
+NOT_STACK - If unit is already under Status, the new one will be ignored.
+REAPPLY (default) - If unit is under Status, appling the same Bon, will delete existing one and apply incomming Bon. It do not trigger onBonStackExpiried.
 STACK_AND_REAPPLY - Bon will stack. All existing stacks of incoming Bon will be deleted and reapplyd.
 NO_OVERHEAD - System do not track stackability. Has less performance overhead, but stacking behavior is unddefinied.
 */

@@ -9,7 +9,7 @@ public abstract class StatusEffect
 
     /**
     this method should never by called manually!
-    Let BonEffect handle this instead.
+    Let Status handle this instead.
     If implemented in child class it must return BonusInstance to allow bonus removing
     */
     abstract function applyBonus(unit u) returns StatusEffectInstance

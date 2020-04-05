@@ -3,37 +3,37 @@ package UnitStatusExtensions
 import Status
 
 /**
-Applys BonEffect to the unit
+Applys Status to the unit
 */
 public function unit.aplyBonEffect(Status bon)
     bon.applyToUnit(this)
 
 /**
-Returns true if unit is under at least one stack of BonEffect.
+Returns true if unit is under at least one stack of Status.
 Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
 */
 public function unit.isUnderBonEffect(Status bon) returns boolean
     return bon.isUnitUnderBon(this)
 
 /**
-Returns stack count of specific BonEffect.
+Returns stack count of specific Status.
 Statuses with the same Buff Id are treated as the same Bon in terms of stackability.
 */
 public function unit.getBonEffectStackCount(Status bon) returns int
     return bon.getStackCount(this)
 
 /**
-Removes BonEffect from unit (all of its stacks). 
+Removes Status from unit (all of its stacks). 
 It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired.
-Returns false when unit was not under BonEffect and there was nothng to be dispelled, true otherwise.
+Returns false when unit was not under Status and there was nothng to be dispelled, true otherwise.
 */
 public function unit.dispellBonEffect(Status bon) returns boolean
     return bon.dispellBonEffect(this)
 
 /**
-Removes BonEffect from unit (all of its stacks). 
-It will not trigger any BonEffect events.
-Returns false when unit was not under BonEffect and there was nothng to be canceled, true otherwise.
+Removes Status from unit (all of its stacks). 
+It will not trigger any Status events.
+Returns false when unit was not under Status and there was nothng to be canceled, true otherwise.
 */
 public function unit.cancelBonEffect(Status bon) returns boolean
     return bon.cancelBonEffect(this)

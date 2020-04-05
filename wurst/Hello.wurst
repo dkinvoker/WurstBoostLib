@@ -40,16 +40,16 @@ init
 	//Creating a mage unit to test a spell
 	let mage = createUnit(Player(0), 'H000', vec2(0, 0), angle(1))
 
-	//Creates a BonEffect (Collection of bonusses that can be applied to an unit).
-	//BonEffect can contain multiple bonuses (ex. Shield + MovementSpeedBonus etc.)
+	//Creates a Status (Collection of bonusses that can be applied to an unit).
+	//Status can contain multiple bonuses (ex. Shield + MovementSpeedBonus etc.)
 	let bonEffect = new Status()
 	..setBuff(MY_BUFF)
 	..setDuration(shieldDuration)
 	..setStackability(StatusStackability.DO_NOT_STACK)
 
-	//ShieldBonus that will be added to BonEffect.
-	//When shield is broaken whole BonEffect should be canceled, otherwise visual effect will remain even after shield break. 
-	//It would also prevent caster from geining another shield unless BonEffect Expiries (DO_NOT_STACK option)
+	//ShieldBonus that will be added to Status.
+	//When shield is broaken whole Status should be canceled, otherwise visual effect will remain even after shield break. 
+	//It would also prevent caster from geining another shield unless Status Expiries (DO_NOT_STACK option)
 	let shieldBonus = new ShieldBonus(powerCalculator.calculatePower(mage))
 	..onShieldBroaken() (unit bonusTarget) ->
 		bonusTarget.cancelBonEffect(bonEffect)
@@ -60,7 +60,7 @@ init
 	EventListener.onPointCast('A000') (unit caster, vec2 target) ->
 		caster.aplyBonEffect(bonEffect)
 
-	//Normally creating bonus to BonEffect can be done inside addBonus call, however adding events handlers is not possible inside other function call.
+	//Normally creating bonus to Status can be done inside addBonus call, however adding events handlers is not possible inside other function call.
 	//(ShieldBonus is the only Bonus that cane have event handler so far)
 	//
 	//Ex (POSSIBLE):

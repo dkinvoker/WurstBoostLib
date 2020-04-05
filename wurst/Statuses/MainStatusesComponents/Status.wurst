@@ -9,7 +9,7 @@ import HashMap
 import initlater StatusInstance
 
 /**
-BonEffect map to keep track of BonEffect instances (used for stackability pourposes)
+Status map to keep track of Status instances (used for stackability pourposes)
 */
 public HashMap<unit, LinkedList<StatusInstance>> bonMap = new HashMap<unit, LinkedList<StatusInstance>>()
 
@@ -20,8 +20,8 @@ interface BonEventHandler
     abstract function handleEvent(unit bonTarget, Status bonEffect)
 
 /**
-BonEffect is container of various effects that can be applied to certain unit
-and automatically vanishes after duration time of BonEffect.
+Status is container of various effects that can be applied to certain unit
+and automatically vanishes after duration time of Status.
 
 Uses Bonus classes.
 Bonus class can be inherited by your own Bonuses to extend functionality
@@ -45,9 +45,9 @@ public class Status
         this.maxStackCout = maxCount
     
     /**
-    Gets max amount of stacks that this BonEffect can apply.
+    Gets max amount of stacks that this Status can apply.
     If stackability is set to DO_NO_STACK or REAPPLY it will always return 1.
-    If stackability is set to NO_OVERHEAD it will return INT_MIN cuz' this BonEffect is not meant to be stacked at any way.
+    If stackability is set to NO_OVERHEAD it will return INT_MIN cuz' this Status is not meant to be stacked at any way.
     */
     function getMaxStackCout() returns int
         switch this.stackability
@@ -73,13 +73,13 @@ public class Status
         return this.stackability
     
     /**
-    Sets BonEffect duration.
+    Sets Status duration.
     */
     function setDuration(real duration)
         this.duration = duration
 
     /**
-    Sets buff that will be used hen BonEffect will be applied to the unit.
+    Sets buff that will be used hen Status will be applied to the unit.
     */
     function setBuff(buffTuple bonBuff)
         this.bonBuff = bonBuff
@@ -87,7 +87,7 @@ public class Status
     //------- REGION: OTHERS ----------
 
     /**
-    Adds new bonus the to BonEffect.
+    Adds new bonus the to Status.
     */
     function addBonus(StatusEffect bonus)
         this.bonuses.add(bonus)
@@ -113,9 +113,9 @@ public class Status
             return result
 
     /**
-    Removes BonEffect from unit (all of its stacks). 
+    Removes Status from unit (all of its stacks). 
     It will trigger onDispelled Event but will not trigger onStackExpired nor onBonExpired.
-    Returns false when unit was not under BonEffect and there was nothng to be dispelled, true otherwise.
+    Returns false when unit was not under Status and there was nothng to be dispelled, true otherwise.
     */
     function dispellBonEffect(unit u) returns boolean
         let bonEffectCanceleResult = this.cancelBonEffect(u)
@@ -124,9 +124,9 @@ public class Status
         return bonEffectCanceleResult
 
     /**
-    Removes BonEffect from unit (all of its stacks). 
-    It will not trigger any BonEffect events.
-    Returns false when unit was not under BonEffect and there was nothng to be canceled, true otherwise.
+    Removes Status from unit (all of its stacks). 
+    It will not trigger any Status events.
+    Returns false when unit was not under Status and there was nothng to be canceled, true otherwise.
     */
     function cancelBonEffect(unit u) returns boolean
         let bonInstances = this.getInstancesAttachedToUnit(u)
@@ -170,8 +170,8 @@ public class Status
         return this.registerBonEffectInstance(u, bonusInstances)
 
     /**
-    Gets new LinkedList that contains all instances of this BonEffect applied to unit u.
-    BonEffect with the same buffId are considered the same BonEffect.
+    Gets new LinkedList that contains all instances of this Status applied to unit u.
+    Status with the same buffId are considered the same Status.
     */
     private function getInstancesAttachedToUnit(unit u) returns LinkedList<StatusInstance>
         if not bonMap.has(u)
@@ -182,7 +182,7 @@ public class Status
     //------- REGION: APPLING BON --------
 
     /**
-    Handles BonEffect appling for STACK stackability option.
+    Handles Status appling for STACK stackability option.
     */
     private function applyToUnit_STACK(unit u)
         if this.getStackCount(u) < this.maxStackCout
@@ -200,14 +200,14 @@ public class Status
             bonInstance.bindEndOfBonCallback(bonEndCallback)
 
     /**
-    Handles BonEffect appling for DO_NOT_STACK stackability option.
+    Handles Status appling for DO_NOT_STACK stackability option.
     */
     private function applyToUnit_DO_NOT_STACK(unit u)
         if not this.isUnitUnderBon(u)
             this.applyToUnit_NO_OVERHEAD(u)
 
     /**
-    Handles BonEffect appling for REAPPLY stackability option.
+    Handles Status appling for REAPPLY stackability option.
     */
     private function applyToUnit_REAPPLY(unit u)
         let instancesAttachedToUnit = this.getInstancesAttachedToUnit(u)
@@ -219,7 +219,7 @@ public class Status
         applyToUnit_NO_OVERHEAD(u)
 
     /**
-    Handles BonEffect appling for STACK_AND_REAPPLY stackability option.
+    Handles Status appling for STACK_AND_REAPPLY stackability option.
     */
     private function applyToUnit_STACK_AND_REAPPLY(unit u)
         int countOfStackstoApply = 1
@@ -234,7 +234,7 @@ public class Status
             this.applyToUnit_STACK(u)
 
     /**
-    Handles BonEffect appling for NO_OVERHEAD stackability option.
+    Handles Status appling for NO_OVERHEAD stackability option.
     */
     private function applyToUnit_NO_OVERHEAD(unit u)
         let bonInstance = this.applyAllBonusesAndRegisterBonEffect(u)
@@ -252,7 +252,7 @@ public class Status
 
     /**
     Applys all of the Bonuses to the unit and sets up Buff for that unit.
-    After Duration Time of the BonEffect all bonuses and Buff will be removed.
+    After Duration Time of the Status all bonuses and Buff will be removed.
     */
     function applyToUnit(unit u)
         switch this.stackability
