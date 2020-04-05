@@ -13,7 +13,7 @@ public class HpBonus extends StatusEffect
     function setBonusValue(real value)
         this.bonusValue = value
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let hpBeforeBonus = u.getHP()
         u.addHP(this.bonusValue)
         let actualBonus = u.getHP() - hpBeforeBonus

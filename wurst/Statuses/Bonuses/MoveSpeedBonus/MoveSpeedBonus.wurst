@@ -15,7 +15,7 @@ public class MoveSpeedBonus extends StatusEffect
     function setBonusValue(real bonusValue)
         this.bonusValue = bonusValue
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let moveSpeedBeforeBonus = u.getMoveSpeed()
         u.setMoveSpeed(moveSpeedBeforeBonus + this.bonusValue)
         let actualBonus = u.getMoveSpeed() - moveSpeedBeforeBonus

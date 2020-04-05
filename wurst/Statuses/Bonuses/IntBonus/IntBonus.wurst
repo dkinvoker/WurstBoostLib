@@ -13,7 +13,7 @@ public class IntBonus extends StatusEffect
     function setBonusValue(int value)
         this.bonusValue = value
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let intBeforeBonus = u.getInt(true)
         u.addInt(this.bonusValue)
         let actualBonus = u.getInt(true) - intBeforeBonus

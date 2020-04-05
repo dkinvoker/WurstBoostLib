@@ -165,7 +165,7 @@ public class Status
     private function applyAllEffectsAndRegisterStatus(unit u) returns StatusInstance
         let effectsInstances = new LinkedList<StatusEffectInstance>()
         for statusEffect in this.effects
-            effectsInstances.add(statusEffect.applyBonus(u))
+            effectsInstances.add(statusEffect.applyEffect(u))
         u.addAbility(this.statusBuff.abilId)
         return this.registerStatusInstance(u, effectsInstances)
 

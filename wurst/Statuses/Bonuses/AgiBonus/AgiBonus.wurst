@@ -16,7 +16,7 @@ public class AgiBonus extends StatusEffect
     function setBonusValue(int bonusValue)
         this.bonusValue = bonusValue
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let agiBeforeBonus = u.getAgi(true)
         u.addAgi(this.bonusValue)
         let actualBonus = u.getAgi(true) - agiBeforeBonus

@@ -13,7 +13,7 @@ public class PercentageAgiBonus extends StatusEffect
     function setBonusValue(real percentageValue)
         this.bonusValue = percentageValue
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let agiBeforeBonus = u.getAgi(true)
         u.addAgi(agiBeforeBonus * (this.bonusValue / 100).toInt())
         let actualBonus = u.getAgi(true)

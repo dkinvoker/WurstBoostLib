@@ -19,7 +19,7 @@ public class ShieldBonus extends StatusEffect
     construct(real shieldPower)
         this.shieldPower = shieldPower
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let bonusInstance = new ShieldBonusInstance(this.shieldPower)
 
         let damageEventListener = DamageEvent.addListener() -> 

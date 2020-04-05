@@ -16,7 +16,7 @@ public class PercentageIntBonus extends StatusEffect
     function setBonusValue(real percentageValue)
         this.bonusValue = percentageValue
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let intBeforeBonus = u.getInt(true)
         u.addInt(intBeforeBonus * (this.bonusValue / 100).toInt())
         let actualBonus = u.getInt(true) - intBeforeBonus

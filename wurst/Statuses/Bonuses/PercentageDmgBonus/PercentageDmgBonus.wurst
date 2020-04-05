@@ -24,7 +24,7 @@ public class PercentageDmgBonus extends StatusEffect
     function setWeaponIndex(int index)
         this.weaponIndex = index
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let dmgBeforeBonus = u.getBaseDamage(this.weaponIndex)
         u.setBaseDamage( (dmgBeforeBonus + dmgBeforeBonus * (this.bonusValue / 100)).toInt(), this.weaponIndex )
         let actualBonus = u.getBaseDamage(this.weaponIndex) - dmgBeforeBonus

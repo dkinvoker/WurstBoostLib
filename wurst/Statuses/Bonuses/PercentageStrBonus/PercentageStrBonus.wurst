@@ -13,7 +13,7 @@ public class PercentageStrBonus extends StatusEffect
     function setBonusValue(real precentageValue)
         this.bonusValue = precentageValue
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let strBeforeBonus = u.getStr(true)
         u.addStr(strBeforeBonus * (this.bonusValue / 100).toInt())
         let actualBonus = u.getStr(true) - strBeforeBonus

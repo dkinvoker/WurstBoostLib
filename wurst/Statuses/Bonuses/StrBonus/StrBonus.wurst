@@ -13,7 +13,7 @@ public class StrBonus extends StatusEffect
     function setBonusValue(int value)
         this.bonusValue = value
 
-    override function applyBonus(unit u) returns StatusEffectInstance
+    override function applyEffect(unit u) returns StatusEffectInstance
         let strBeforeBonus = u.getStr(true)
         u.addStr(this.bonusValue)
         let actualBonus = u.getStr(true) - strBeforeBonus
