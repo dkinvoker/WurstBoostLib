@@ -1,10 +1,10 @@
 package PercentageAgiBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import AgiBonusInstance
 
-public class PercentageAgiBonus extends Bonus
+public class PercentageAgiBonus extends StatusEffect
     private real bonusValue = 0
 
     construct(real percentageValue)

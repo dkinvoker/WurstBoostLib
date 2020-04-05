@@ -1,7 +1,7 @@
 package Status
 import LinkedList
 import BonusInstance
-import Bonus
+import StatusEffect
 import ClosureTimers
 import BuffObjEditing
 import StatusStackability
@@ -27,7 +27,7 @@ Uses Bonus classes.
 Bonus class can be inherited by your own Bonuses to extend functionality
 */
 public class Status
-    private LinkedList<Bonus> bonuses = new LinkedList<Bonus>()
+    private LinkedList<StatusEffect> bonuses = new LinkedList<StatusEffect>()
     private real duration = 1
     private buffTuple bonBuff
     private int maxStackCout = 25
@@ -89,7 +89,7 @@ public class Status
     /**
     Adds new bonus the to BonEffect.
     */
-    function addBonus(Bonus bonus)
+    function addBonus(StatusEffect bonus)
         this.bonuses.add(bonus)
 
     /**

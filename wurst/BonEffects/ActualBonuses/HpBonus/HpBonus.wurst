@@ -1,10 +1,10 @@
 package HpBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import HpBonusInstance
 
-public class HpBonus extends Bonus
+public class HpBonus extends StatusEffect
     private real bonusValue = 0
 
     construct (real value)

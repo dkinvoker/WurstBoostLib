@@ -1,10 +1,10 @@
 package PercentageStrBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import StrBonusInstance
 
-public class PercentageStrBonus extends Bonus
+public class PercentageStrBonus extends StatusEffect
     private real bonusValue = 0
 
     construct(real precentageValue)

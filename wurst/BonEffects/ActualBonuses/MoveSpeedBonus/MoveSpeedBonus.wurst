@@ -1,12 +1,12 @@
 package MoveSpeedBonus
-import Bonus
+import StatusEffect
 import BonusInstance
 import MoveSpeedBonusInstance
 
 /**
 Fixed MoveSpeedBonus bonus.
 */
-public class MoveSpeedBonus extends Bonus
+public class MoveSpeedBonus extends StatusEffect
     private real bonusValue = 0
 
     construct(real bonusValue)

@@ -1,6 +1,6 @@
 package ShieldBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import DamageEvent
 import ShieldBonusInstance
@@ -11,7 +11,7 @@ interface OnShieldBroakenEventHandler
 /**
 Prevents target from taking damage up to certain damage threshold
 */
-public class ShieldBonus extends Bonus
+public class ShieldBonus extends StatusEffect
 
     private real shieldPower = 0
     private OnShieldBroakenEventHandler onShieldBroakenEventHandler = null

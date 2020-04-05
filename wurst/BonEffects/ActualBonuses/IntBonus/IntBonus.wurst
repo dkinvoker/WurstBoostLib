@@ -1,10 +1,10 @@
 package IntBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import IntBonusInstance
 
-public class IntBonus extends Bonus
+public class IntBonus extends StatusEffect
     private int bonusValue = 0
 
     construct (int value)

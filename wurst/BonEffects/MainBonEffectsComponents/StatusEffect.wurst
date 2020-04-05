@@ -1,11 +1,11 @@
-package Bonus
+package StatusEffect
 import BonusInstance
 
 /**
 Abstract Bonus class that can be inherited by your own bonuses.
 Requires to implement one method that takes unit and modifies it.
 */
-public abstract class Bonus
+public abstract class StatusEffect
 
     /**
     this method should never by called manually!

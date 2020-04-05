@@ -1,13 +1,13 @@
 package DmgBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import DmgBonusInstance
 
 /**
 Fixed DMG bonus for specifict weapon
 */
-public class DmgBonus extends Bonus
+public class DmgBonus extends StatusEffect
     private int bonusValue = 0
     private int weaponIndex = 0
 

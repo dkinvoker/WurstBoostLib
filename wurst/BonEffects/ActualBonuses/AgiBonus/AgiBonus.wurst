@@ -1,13 +1,13 @@
 package AgiBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import AgiBonusInstance
 
 /**
 Fixed Agi Bonus bonus.
 */
-public class AgiBonus extends Bonus
+public class AgiBonus extends StatusEffect
     private int bonusValue = 0
 
     construct(int bonusValue)

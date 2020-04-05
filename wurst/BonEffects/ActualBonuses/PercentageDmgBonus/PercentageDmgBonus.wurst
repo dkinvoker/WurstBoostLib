@@ -1,13 +1,13 @@
 package PercentageDmgBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import DmgBonusInstance
 
 /**
 Percentage DMG bonus for specific weapon
 */
-public class PercentageDmgBonus extends Bonus
+public class PercentageDmgBonus extends StatusEffect
     private real bonusValue = 0
     private int weaponIndex = 0
 

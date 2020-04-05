@@ -1,13 +1,13 @@
 package PercentageMoveSpeedBonus
 
-import Bonus
+import StatusEffect
 import BonusInstance
 import MoveSpeedBonusInstance
 
 /**
 Percentage MovementSpeed Bonus
 */
-public class PercentageMoveSpeedBonus extends Bonus
+public class PercentageMoveSpeedBonus extends StatusEffect
     private real bonusValue = 0
 
     construct(real percentageValue)
