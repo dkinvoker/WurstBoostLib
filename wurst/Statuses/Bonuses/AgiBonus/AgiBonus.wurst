@@ -1,0 +1,23 @@
+package AgiBonus
+
+import StatusEffect
+import StatusEffectInstance
+import AgiBonusInstance
+
+/**
+Fixed Agi Bonus bonus.
+*/
+public class AgiBonus extends StatusEffect
+    private int bonusValue = 0
+
+    construct(int bonusValue)
+        this.bonusValue = bonusValue
+
+    function setBonusValue(int bonusValue)
+        this.bonusValue = bonusValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let agiBeforeBonus = u.getAgi(true)
+        u.addAgi(this.bonusValue)
+        let actualBonus = u.getAgi(true) - agiBeforeBonus
+        return new AgiBonusInstance(actualBonus)

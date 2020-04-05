@@ -1,0 +1,20 @@
+package PercentageAgiBonus
+
+import StatusEffect
+import StatusEffectInstance
+import AgiBonusInstance
+
+public class PercentageAgiBonus extends StatusEffect
+    private real bonusValue = 0
+
+    construct(real percentageValue)
+        this.bonusValue = percentageValue
+
+    function setBonusValue(real percentageValue)
+        this.bonusValue = percentageValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let agiBeforeBonus = u.getAgi(true)
+        u.addAgi(agiBeforeBonus * (this.bonusValue / 100).toInt())
+        let actualBonus = u.getAgi(true)
+        return new AgiBonusInstance(actualBonus)

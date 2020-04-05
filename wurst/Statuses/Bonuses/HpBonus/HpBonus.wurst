@@ -1,0 +1,20 @@
+package HpBonus
+
+import StatusEffect
+import StatusEffectInstance
+import HpBonusInstance
+
+public class HpBonus extends StatusEffect
+    private real bonusValue = 0
+
+    construct (real value)
+        this.bonusValue = value
+
+    function setBonusValue(real value)
+        this.bonusValue = value
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let hpBeforeBonus = u.getHP()
+        u.addHP(this.bonusValue)
+        let actualBonus = u.getHP() - hpBeforeBonus
+        return new HpBonusInstance(actualBonus)

@@ -1,0 +1,12 @@
+package StrBonusInstance
+
+import StatusEffectInstance
+
+public class StrBonusInstance extends StatusEffectInstance
+    private int actualBonusValue
+
+    construct(int bonusValue)
+        this.actualBonusValue = bonusValue
+
+    override function removeEffect(unit u) 
+        u.addStr(-this.actualBonusValue)

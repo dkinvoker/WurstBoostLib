@@ -1,0 +1,20 @@
+package PercentageStrBonus
+
+import StatusEffect
+import StatusEffectInstance
+import StrBonusInstance
+
+public class PercentageStrBonus extends StatusEffect
+    private real bonusValue = 0
+
+    construct(real precentageValue)
+        this.bonusValue = precentageValue
+
+    function setBonusValue(real precentageValue)
+        this.bonusValue = precentageValue
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let strBeforeBonus = u.getStr(true)
+        u.addStr(strBeforeBonus * (this.bonusValue / 100).toInt())
+        let actualBonus = u.getStr(true) - strBeforeBonus
+        return new StrBonusInstance(actualBonus)

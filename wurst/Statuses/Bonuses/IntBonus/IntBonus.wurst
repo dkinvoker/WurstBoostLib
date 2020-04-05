@@ -1,0 +1,20 @@
+package IntBonus
+
+import StatusEffect
+import StatusEffectInstance
+import IntBonusInstance
+
+public class IntBonus extends StatusEffect
+    private int bonusValue = 0
+
+    construct (int value)
+        this.bonusValue = value
+
+    function setBonusValue(int value)
+        this.bonusValue = value
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let intBeforeBonus = u.getInt(true)
+        u.addInt(this.bonusValue)
+        let actualBonus = u.getInt(true) - intBeforeBonus
+        return new IntBonusInstance(actualBonus)

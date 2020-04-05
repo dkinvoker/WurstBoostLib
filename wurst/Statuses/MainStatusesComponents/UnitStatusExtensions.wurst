@@ -1,0 +1,39 @@
+package UnitStatusExtensions
+
+import Status
+
+/**
+Applys Status to the unit
+*/
+public function unit.aplyStatus(Status status)
+    status.applyToUnit(this)
+
+/**
+Returns true if unit is under at least one stack of Status.
+Statuses with the same Buff Id are treated as the same Status in terms of stackability.
+*/
+public function unit.isUnderStatus(Status status) returns boolean
+    return status.isUnitUnderStatus(this)
+
+/**
+Returns stack count of specific Status.
+Statuses with the same Buff Id are treated as the same Status in terms of stackability.
+*/
+public function unit.getStatusStackCount(Status status) returns int
+    return status.getStackCount(this)
+
+/**
+Removes Status from unit (all of its stacks). 
+It will trigger onDispelled Event but will not trigger onStackExpired nor onStatusExpired.
+Returns false when unit was not under Status and there was nothng to be dispelled, true otherwise.
+*/
+public function unit.dispellStatus(Status status) returns boolean
+    return status.dispellStatus(this)
+
+/**
+Removes Status from unit (all of its stacks). 
+It will not trigger any Status events.
+Returns false when unit was not under Status and there was nothng to be canceled, true otherwise.
+*/
+public function unit.cancelStatus(Status status) returns boolean
+    return status.cancelStatus(this)

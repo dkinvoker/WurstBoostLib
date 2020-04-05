@@ -1,0 +1,30 @@
+package ShieldBonusInstance
+
+import StatusEffectInstance
+import DamageEvent
+
+public class ShieldBonusInstance extends StatusEffectInstance
+
+    private real remainingShield = 0
+    private DamageListener damageEventListener
+
+    construct(real shieldPower)
+        this.remainingShield = shieldPower
+
+    function bindListener(DamageListener eventListener)
+        this.damageEventListener = eventListener
+
+    function reduceShield(real value)
+        this.remainingShield -= value
+
+    function getRemainingShield() returns real
+        return this.remainingShield
+
+    function breakShield()
+        destroy this.damageEventListener
+        this.damageEventListener = null
+
+    override function removeEffect(unit u)
+        //Check if shield was already broken
+        if damageEventListener != null
+            destroy this.damageEventListener

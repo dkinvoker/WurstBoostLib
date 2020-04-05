@@ -1,0 +1,14 @@
+package DmgBonusInstance
+
+import StatusEffectInstance
+
+public class DmgBonusInstance extends StatusEffectInstance
+    private int bonusValue = 0
+    private int weaponIndex = 0
+
+    construct(int actualBonusValue, int weaponIndex)
+        this.bonusValue = actualBonusValue
+        this.weaponIndex = weaponIndex
+    
+    override function removeEffect(unit u)
+        u.setBaseDamage(u.getBaseDamage(this.weaponIndex) - this.bonusValue, this.weaponIndex)

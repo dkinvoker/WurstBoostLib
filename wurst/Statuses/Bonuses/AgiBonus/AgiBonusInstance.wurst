@@ -1,0 +1,12 @@
+package AgiBonusInstance
+
+import StatusEffectInstance
+
+public class AgiBonusInstance extends StatusEffectInstance
+    private int bonusValue = 0
+
+    construct(int actualBonusValue)
+        this.bonusValue = actualBonusValue
+    
+    override function removeEffect(unit u)
+        u.addAgi(-this.bonusValue)

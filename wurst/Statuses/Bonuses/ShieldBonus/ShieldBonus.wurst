@@ -1,0 +1,51 @@
+package ShieldBonus
+
+import StatusEffect
+import StatusEffectInstance
+import DamageEvent
+import ShieldBonusInstance
+
+interface OnShieldBroakenEventHandler 
+    function handleEvent(unit bonusTarget)
+
+/**
+Prevents target from taking damage up to certain damage threshold
+*/
+public class ShieldBonus extends StatusEffect
+
+    private real shieldPower = 0
+    private OnShieldBroakenEventHandler onShieldBroakenEventHandler = null
+
+    construct(real shieldPower)
+        this.shieldPower = shieldPower
+
+    override function applyEffect(unit u) returns StatusEffectInstance
+        let bonusInstance = new ShieldBonusInstance(this.shieldPower)
+
+        let damageEventListener = DamageEvent.addListener() -> 
+            if DamageEvent.getTarget() == u
+                let damage = DamageEvent.getAmount()
+
+                //Reduce shild Power
+                bonusInstance.reduceShield(damage)
+                //Reduce damage done
+                DamageEvent.subAmount(damage)
+
+                //If Shield was broaken add damage that exeads shield power and and the effect
+                let remainingShield = bonusInstance.getRemainingShield()
+                if remainingShield < 0
+                    DamageEvent.addAmount(-remainingShield)
+                    bonusInstance.breakShield()
+                    this.onShieldBroakenEventHandler.handleEvent(u)
+
+        bonusInstance.bindListener(damageEventListener)
+        return bonusInstance
+
+    /**
+    Sets an event that will be called after shield breaks.
+    */
+    function onShieldBroaken(OnShieldBroakenEventHandler handler)
+        if this.onShieldBroakenEventHandler != null
+            destroy this.onShieldBroakenEventHandler
+        this.onShieldBroakenEventHandler = handler
+                

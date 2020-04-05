@@ -1,7 +1,7 @@
 package Hello
 
 //MY OWN LIBLARY
-import BonEffects
+import Statuses
 import PowerCalculator
 
 //FROM STANDARD LIBLARY
@@ -11,7 +11,7 @@ import Assets
 
 //Example of Simple Spell script
 //This script adds an effect to a spell, which applys shield to caster.
-//Bonus power is based on Hero Inteligence 
+//Status power is based on Hero Inteligence 
 
 // Configurable value indicating how much Hero Inteligence influences Shield power. 
 @configurable real shieldPowerIntRatio
@@ -40,49 +40,49 @@ init
 	//Creating a mage unit to test a spell
 	let mage = createUnit(Player(0), 'H000', vec2(0, 0), angle(1))
 
-	//Creates a BonEffect (Collection of bonusses that can be applied to an unit).
-	//BonEffect can contain multiple bonuses (ex. Shield + MovementSpeedBonus etc.)
-	let bonEffect = new BonEffect()
+	//Creates a Status (Collection of effects that can be applied to an unit).
+	//Status can contain multiple effects (ex. Shield + MovementSpeedBonus etc.)
+	let status = new Status()
 	..setBuff(MY_BUFF)
 	..setDuration(shieldDuration)
-	..setStackability(BonStackability.DO_NOT_STACK)
+	..setStackability(StatusStackability.DO_NOT_STACK)
 
-	//ShieldBonus that will be added to BonEffect.
-	//When shield is broaken whole BonEffect should be canceled, otherwise visual effect will remain even after shield break. 
-	//It would also prevent caster from geining another shield unless BonEffect Expiries (DO_NOT_STACK option)
+	//ShieldBonus that will be added to Status.
+	//When shield is broaken whole Status should be canceled, otherwise visual effect will remain even after shield break. 
+	//It would also prevent caster from geining another shield unless Status Expiries (DO_NOT_STACK option)
 	let shieldBonus = new ShieldBonus(powerCalculator.calculatePower(mage))
 	..onShieldBroaken() (unit bonusTarget) ->
-		bonusTarget.cancelBonEffect(bonEffect)
+		bonusTarget.cancelStatus(status)
 
-	bonEffect.addBonus(shieldBonus)
+	status.addEffect(shieldBonus)
 	
 	//Adding effect to a spell with certaing spell ID
 	EventListener.onPointCast('A000') (unit caster, vec2 target) ->
-		caster.aplyBonEffect(bonEffect)
+		caster.aplyStatus(status)
 
-	//Normally creating bonus to BonEffect can be done inside addBonus call, however adding events handlers is not possible inside other function call.
+	//Normally creating bonus to Status can be done inside addBonus call, however adding events handlers is not possible inside other function call.
 	//(ShieldBonus is the only Bonus that cane have event handler so far)
 	//
 	//Ex (POSSIBLE):
-	//bonEffect
-	//..addBonus(new ShieldBonus(10))
+	//status
+	//..addEffect(new ShieldBonus(10))
 	//
 	//EX (Syntax Error)
-	//bonEffect
-	//..addBonus(
+	//status
+	//..addEffect(
 	//	new ShieldBonus(10)
 	//	..onShieldBroaken() (unit bonusTarget) ->
-	//		bonusTarget.cancelBonEffect(bonEffect)
+	//		bonusTarget.cancelStatus(status)
 	//)
-	//Ex (Generally possible, but not in that context (cyclic symbol evocation (bonEffect)))
-	//bonEffect
-	//..addBonus(
+	//Ex (Generally possible, but not in that context (cyclic symbol evocation (status)))
+	//status
+	//..addEffect(
 	//	new ShieldBonus(10)
-	//	..onShieldBroaken( (unit bonusTarget) -> bonusTarget.cancelBonEffect(bonEffect) )
+	//	..onShieldBroaken( (unit bonusTarget) -> bonusTarget.cancelStatus(status) )
 	//)
 	//Ex (POSSIBLE)
-	//bonEffect
-	//..addBonus(
+	//status
+	//..addEffect(
 	//	new ShieldBonus(10)
 	//	..onShieldBroaken( (unit bonusTarget) -> print("DUPA") )
 	//)

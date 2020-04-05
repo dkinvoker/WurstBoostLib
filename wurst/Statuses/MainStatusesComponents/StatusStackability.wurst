@@ -1,0 +1,19 @@
+package StatusStackability
+
+/**
+StatusStackability Options
+WARNING! 
+Statuses with the same Buff Id are treated as the same Status in terms of stackability.
+
+STACK - The same Statuses will stack, but will have separate timers, and will expire individually.
+NOT_STACK - If unit is already under Status, the new one will be ignored.
+REAPPLY (default) - If unit is under Status, appling the same Status, will delete existing one and apply incomming Status. It do not trigger onStackExpiried.
+STACK_AND_REAPPLY - Status will stack. All existing stacks of incoming Status will be deleted and reapplyd.
+NO_OVERHEAD - System do not track stackability. Has less performance overhead, but stacking behavior is unddefinied.
+*/
+public enum StatusStackability
+    STACK
+    DO_NOT_STACK
+    REAPPLY
+    STACK_AND_REAPPLY
+    NO_OVERHEAD
