@@ -2,13 +2,16 @@ package ShieldBonusInstance
 
 import StatusEffectInstance
 import DamageEvent
+import ShieldVisualizationEngine
 
 public class ShieldBonusInstance extends StatusEffectInstance
 
+    private real initialPower = 0
     private real remainingShield = 0
     private DamageListener damageEventListener
 
     construct(real shieldPower)
+        this.initialPower = shieldPower
         this.remainingShield = shieldPower
 
     function bindListener(DamageListener eventListener)
@@ -20,11 +23,9 @@ public class ShieldBonusInstance extends StatusEffectInstance
     function getRemainingShield() returns real
         return this.remainingShield
 
-    function breakShield()
-        destroy this.damageEventListener
-        this.damageEventListener = null
-
     override function removeEffect(unit u)
-        //Check if shield was already broken
         if damageEventListener != null
             destroy this.damageEventListener
+            this.damageEventListener = null
+        ShieldVisualizationEngine.registerShieldDamage(u, this.remainingShield)
+        ShieldVisualizationEngine.registerShieldBrokenOrCanceled(u, this.initialPower)

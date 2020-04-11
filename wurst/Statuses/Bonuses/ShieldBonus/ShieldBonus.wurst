@@ -4,6 +4,8 @@ import StatusEffect
 import StatusEffectInstance
 import DamageEvent
 import ShieldBonusInstance
+import public VisualizationOptions
+import ShieldVisualizationEngine
 
 interface OnShieldBroakenEventHandler 
     function handleEvent(unit bonusTarget)
@@ -21,6 +23,7 @@ public class ShieldBonus extends StatusEffect
 
     override function applyEffect(unit u) returns StatusEffectInstance
         let bonusInstance = new ShieldBonusInstance(this.shieldPower)
+        ShieldVisualizationEngine.addVisualizationForUnit(u, this.shieldPower)
 
         let damageEventListener = DamageEvent.addListener() -> 
             if DamageEvent.getTarget() == u
@@ -28,6 +31,7 @@ public class ShieldBonus extends StatusEffect
 
                 //Reduce shild Power
                 bonusInstance.reduceShield(damage)
+                ShieldVisualizationEngine.registerShieldDamage(u, damage)
                 //Reduce damage done
                 DamageEvent.subAmount(damage)
 
@@ -35,7 +39,7 @@ public class ShieldBonus extends StatusEffect
                 let remainingShield = bonusInstance.getRemainingShield()
                 if remainingShield < 0
                     DamageEvent.addAmount(-remainingShield)
-                    bonusInstance.breakShield()
+                    bonusInstance.removeEffect(u)
                     this.onShieldBroakenEventHandler.handleEvent(u)
 
         bonusInstance.bindListener(damageEventListener)
@@ -49,3 +53,8 @@ public class ShieldBonus extends StatusEffect
             destroy this.onShieldBroakenEventHandler
         this.onShieldBroakenEventHandler = handler
                 
+    static function setVisualizationOption(ShieldVisualization option)
+        ShieldVisualizationEngine.setVisualizationOption(option)
+
+    static function setVisualizationRefreshRate(int refreshRate)
+        ShieldVisualizationEngine.setRefrashRate(refreshRate)

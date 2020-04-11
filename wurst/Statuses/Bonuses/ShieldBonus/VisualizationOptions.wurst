@@ -1,0 +1,5 @@
+package VisualizationOptions
+
+public enum ShieldVisualization
+    NONE
+    TEXT

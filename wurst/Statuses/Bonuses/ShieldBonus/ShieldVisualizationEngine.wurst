@@ -1,0 +1,128 @@
+package ShieldVisualizationEngine
+import LinkedList
+import ClosureTimers
+import VisualizationOptions
+
+class ShieldPointsTracker
+    private real currentShieldPoints = 0
+    private real cummulativeMaxShieldPoints = 0
+    private unit target = null
+    private texttag textVisualization = null
+
+    construct(unit u, real shieldPower)
+        this.target = u
+        this.addShield(shieldPower)
+
+    function getTrackedUnit() returns unit
+        return this.target
+
+    function hasAnyShieldPowerLeft() returns bool
+        return cummulativeMaxShieldPoints > 0 
+
+    function addShield(real shieldPower)
+        this.currentShieldPoints += shieldPower
+        this.cummulativeMaxShieldPoints += shieldPower 
+
+    function damageShield(real amount)
+        this.currentShieldPoints -= amount
+
+    function subFromCumulativeMax(real amount)
+        this.cummulativeMaxShieldPoints -= amount
+
+    function initTextVisualization()
+        let text = this.getVisualizationString()
+        this.textVisualization = createTTEx(calculateTextPosForUnit(text.length()), text, 12)
+
+    function updateTextVisualization()
+        let text = getVisualizationString()
+        let gbColor = (255 * this.currentShieldPoints / this.cummulativeMaxShieldPoints).toInt()
+        this.textVisualization
+        ..setPos(calculateTextPosForUnit(text.length()))
+        ..setText(text, 12)
+        ..setColor(255, gbColor, gbColor, 255)
+
+    private function getVisualizationString() returns string
+        return this.currentShieldPoints.toInt().toString() + " / " + this.cummulativeMaxShieldPoints.toInt().toString()
+
+    private function calculateTextPosForUnit(int textLength) returns vec3
+        return this.target.getPos3Zero() + vec3(-textLength * 9.5, 145, 0)
+
+    ondestroy
+        this.textVisualization.destr()
+
+class ShieldVisualizationEngine
+    private static LinkedList<ShieldPointsTracker> shieldTrackers = new LinkedList<ShieldPointsTracker>()
+    private static ShieldVisualization visualizationOption = ShieldVisualization.TEXT
+    private static int refreshRate = 60
+    private static CallbackPeriodic textVisualizationCallback = null
+
+    static function setVisualizationOption(ShieldVisualization option)
+        ShieldVisualizationEngine.visualizationOption = option
+
+    static function setRefrashRate(int refreshRate)
+        ShieldVisualizationEngine.refreshRate = refreshRate
+
+    static function addVisualizationForUnit(unit u, real shieldPower)
+        if visualizationOption == ShieldVisualization.NONE
+            return
+        let trackersCountAfterRegistration = shieldTrackers.size()
+        setupTrackerForUnit(u, shieldPower)
+        if trackersCountAfterRegistration == 0
+            initVisualizationForUnit(u)
+            initCallback()
+          
+    static function registerShieldDamage(unit u, real damageAmount)
+        if visualizationOption == ShieldVisualization.NONE
+            return
+        for tracker in shieldTrackers
+            if tracker.getTrackedUnit() == u
+                tracker.damageShield(damageAmount)
+                break
+
+    static function registerShieldBrokenOrCanceled(unit u, real initialShieldPower)
+        if visualizationOption == ShieldVisualization.NONE
+            return
+        for tracker in shieldTrackers
+            if tracker.getTrackedUnit() == u
+                tracker.subFromCumulativeMax(initialShieldPower)
+                if not tracker.hasAnyShieldPowerLeft()
+                    shieldTrackers.remove(tracker)
+                    destroy tracker
+                break
+        if shieldTrackers.size() == 0
+            if textVisualizationCallback != null
+                destroy textVisualizationCallback
+                textVisualizationCallback = null
+
+    private static function setupTrackerForUnit(unit u, real shieldPower)
+        let checkList = shieldTrackers.filter( (ShieldPointsTracker t) -> t.getTrackedUnit() == u )
+        if checkList.size() == 0
+            shieldTrackers.add(new ShieldPointsTracker(u, shieldPower))
+        else 
+            checkList.get(0).addShield(shieldPower)
+        destroy checkList
+        
+    private static function initVisualizationForUnit(unit u)
+        switch visualizationOption
+            case NONE
+                skip
+            case TEXT
+                initVisualizationForUnit_TEXT(u)
+
+    private static function initVisualizationForUnit_TEXT(unit u)
+        for tracker in shieldTrackers
+            if tracker.getTrackedUnit() == u
+                tracker.initTextVisualization()
+                break
+            
+    private static function initCallback()
+        switch visualizationOption
+            case NONE
+                skip
+            case TEXT
+                initializeCallback_TEXT()
+
+    private static function initializeCallback_TEXT()
+        ShieldVisualizationEngine.textVisualizationCallback = doPeriodically(1/refreshRate) (CallbackPeriodic cb) ->
+            for shiledTracker in shieldTrackers
+                shiledTracker.updateTextVisualization()
