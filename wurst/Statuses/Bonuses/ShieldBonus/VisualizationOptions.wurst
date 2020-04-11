@@ -1,5 +1,10 @@
 package VisualizationOptions
 
+/**
+ShieldBonus visualzation options. 
+NONE - Shield points will not be displayed to the player by any way. It overhead-free.
+TEXT - Remaining shield points will be displayed as text displayed above unit.
+*/
 public enum ShieldVisualization
     NONE
     TEXT

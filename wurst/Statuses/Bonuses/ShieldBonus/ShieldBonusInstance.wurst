@@ -6,12 +6,10 @@ import ShieldVisualizationEngine
 
 public class ShieldBonusInstance extends StatusEffectInstance
 
-    private real initialPower = 0
     private real remainingShield = 0
     private DamageListener damageEventListener
 
     construct(real shieldPower)
-        this.initialPower = shieldPower
         this.remainingShield = shieldPower
 
     function bindListener(DamageListener eventListener)
@@ -27,5 +25,4 @@ public class ShieldBonusInstance extends StatusEffectInstance
         if damageEventListener != null
             destroy this.damageEventListener
             this.damageEventListener = null
-        ShieldVisualizationEngine.registerShieldDamage(u, this.remainingShield)
-        ShieldVisualizationEngine.registerShieldBrokenOrCanceled(u, this.initialPower)
+        ShieldVisualizationEngine.registerShieldDamage(u, this.remainingShield, true)

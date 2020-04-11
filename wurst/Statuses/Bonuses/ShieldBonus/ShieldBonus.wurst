@@ -31,7 +31,7 @@ public class ShieldBonus extends StatusEffect
 
                 //Reduce shild Power
                 bonusInstance.reduceShield(damage)
-                ShieldVisualizationEngine.registerShieldDamage(u, damage)
+                ShieldVisualizationEngine.registerShieldDamage(u, damage, false)
                 //Reduce damage done
                 DamageEvent.subAmount(damage)
 
@@ -52,9 +52,17 @@ public class ShieldBonus extends StatusEffect
         if this.onShieldBroakenEventHandler != null
             destroy this.onShieldBroakenEventHandler
         this.onShieldBroakenEventHandler = handler
-                
+           
+    /**
+    Sets shield bonus visualization option. 
+    It determines how shield points will be visualized to the player.
+    Default is TEXT.
+    */
     static function setVisualizationOption(ShieldVisualization option)
         ShieldVisualizationEngine.setVisualizationOption(option)
 
+    /**
+    Sets visualization refresh rate (how many times per second). Default is 60
+    */
     static function setVisualizationRefreshRate(int refreshRate)
         ShieldVisualizationEngine.setRefrashRate(refreshRate)

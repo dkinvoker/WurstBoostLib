@@ -5,7 +5,6 @@ import VisualizationOptions
 
 class ShieldPointsTracker
     private real currentShieldPoints = 0
-    private real cummulativeMaxShieldPoints = 0
     private unit target = null
     private texttag textVisualization = null
 
@@ -16,36 +15,48 @@ class ShieldPointsTracker
     function getTrackedUnit() returns unit
         return this.target
 
-    function hasAnyShieldPowerLeft() returns bool
-        return cummulativeMaxShieldPoints > 0 
+    function hasAnyShieldLeft() returns bool
+        return currentShieldPoints > 0 
 
+    /**
+    Add shield poinst for the tracker.
+    */
     function addShield(real shieldPower)
         this.currentShieldPoints += shieldPower
-        this.cummulativeMaxShieldPoints += shieldPower 
 
+    /**
+    Register shield damege on the tracker.
+    */
     function damageShield(real amount)
         this.currentShieldPoints -= amount
 
-    function subFromCumulativeMax(real amount)
-        this.cummulativeMaxShieldPoints -= amount
-
+    /**
+    Setsup TEXT visualization texttag.
+    */
     function initTextVisualization()
         let text = this.getVisualizationString()
         this.textVisualization = createTTEx(calculateTextPosForUnit(text.length()), text, 12)
 
+    /**
+    Updates texttag position and text.
+    */
     function updateTextVisualization()
         let text = getVisualizationString()
-        let gbColor = (255 * this.currentShieldPoints / this.cummulativeMaxShieldPoints).toInt()
         this.textVisualization
         ..setPos(calculateTextPosForUnit(text.length()))
         ..setText(text, 12)
-        ..setColor(255, gbColor, gbColor, 255)
 
+    /**
+    Returns string displayed above unit when TEXT visualization is used.
+    */
     private function getVisualizationString() returns string
-        return this.currentShieldPoints.toInt().toString() + " / " + this.cummulativeMaxShieldPoints.toInt().toString()
+        return "(" + this.currentShieldPoints.toInt().toString() + ")"
 
+    /**
+    Returns texttag position based on the text length.
+    */
     private function calculateTextPosForUnit(int textLength) returns vec3
-        return this.target.getPos3Zero() + vec3(-textLength * 9.5, 145, 0)
+        return this.target.getPos3Zero() + vec3(-textLength * 9.5, 165, 0)
 
     ondestroy
         this.textVisualization.destr()
@@ -56,12 +67,21 @@ class ShieldVisualizationEngine
     private static int refreshRate = 60
     private static CallbackPeriodic textVisualizationCallback = null
 
+    /**
+    Sets shield bonus visualization option. Default is TEXT.
+    */
     static function setVisualizationOption(ShieldVisualization option)
         ShieldVisualizationEngine.visualizationOption = option
 
+    /**
+    Sets visualization refresh rate (how many times per second). Default is 60
+    */
     static function setRefrashRate(int refreshRate)
         ShieldVisualizationEngine.refreshRate = refreshRate
 
+    /**
+    Adds shield visualization for the unit.
+    */
     static function addVisualizationForUnit(unit u, real shieldPower)
         if visualizationOption == ShieldVisualization.NONE
             return
@@ -70,22 +90,18 @@ class ShieldVisualizationEngine
         if trackersCountAfterRegistration == 0
             initVisualizationForUnit(u)
             initCallback()
-          
-    static function registerShieldDamage(unit u, real damageAmount)
+         
+    /**
+    Updates visualization data based on damage done to the shield.
+    If onBroken parameter == true, while visualization may end at this time (If there is no more shield poinst left)
+    */
+    static function registerShieldDamage(unit u, real damageAmount, bool onBroken)
         if visualizationOption == ShieldVisualization.NONE
             return
         for tracker in shieldTrackers
             if tracker.getTrackedUnit() == u
                 tracker.damageShield(damageAmount)
-                break
-
-    static function registerShieldBrokenOrCanceled(unit u, real initialShieldPower)
-        if visualizationOption == ShieldVisualization.NONE
-            return
-        for tracker in shieldTrackers
-            if tracker.getTrackedUnit() == u
-                tracker.subFromCumulativeMax(initialShieldPower)
-                if not tracker.hasAnyShieldPowerLeft()
+                if onBroken and not tracker.hasAnyShieldLeft()
                     shieldTrackers.remove(tracker)
                     destroy tracker
                 break
@@ -94,6 +110,10 @@ class ShieldVisualizationEngine
                 destroy textVisualizationCallback
                 textVisualizationCallback = null
 
+    /**
+    Adding shield points to be tracked.
+    If tracker do not exists it will be created.
+    */
     private static function setupTrackerForUnit(unit u, real shieldPower)
         let checkList = shieldTrackers.filter( (ShieldPointsTracker t) -> t.getTrackedUnit() == u )
         if checkList.size() == 0
@@ -101,7 +121,10 @@ class ShieldVisualizationEngine
         else 
             checkList.get(0).addShield(shieldPower)
         destroy checkList
-        
+     
+    /**
+    Initalizes visualization mechanism for unit.
+    */
     private static function initVisualizationForUnit(unit u)
         switch visualizationOption
             case NONE
@@ -109,12 +132,18 @@ class ShieldVisualizationEngine
             case TEXT
                 initVisualizationForUnit_TEXT(u)
 
+    /**
+    Initalizes TEXT visualization mechanism for unit.
+    */
     private static function initVisualizationForUnit_TEXT(unit u)
         for tracker in shieldTrackers
             if tracker.getTrackedUnit() == u
                 tracker.initTextVisualization()
                 break
-            
+       
+    /**
+    Initializes visualization callback for the whole mechanism.
+    */
     private static function initCallback()
         switch visualizationOption
             case NONE
@@ -122,6 +151,9 @@ class ShieldVisualizationEngine
             case TEXT
                 initializeCallback_TEXT()
 
+    /**
+    Initializes TEXT visualization callback for the whole mechanism.
+    */
     private static function initializeCallback_TEXT()
         ShieldVisualizationEngine.textVisualizationCallback = doPeriodically(1/refreshRate) (CallbackPeriodic cb) ->
             for shiledTracker in shieldTrackers
