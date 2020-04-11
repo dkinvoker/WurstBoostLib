@@ -85,10 +85,9 @@ class ShieldVisualizationEngine
     static function addVisualizationForUnit(unit u, real shieldPower)
         if visualizationOption == ShieldVisualization.NONE
             return
-        let trackersCountAfterRegistration = shieldTrackers.size()
+        let trackersCountBeforeRegistration = shieldTrackers.size()
         setupTrackerForUnit(u, shieldPower)
-        if trackersCountAfterRegistration == 0
-            initVisualizationForUnit(u)
+        if trackersCountBeforeRegistration == 0
             initCallback()
          
     /**
@@ -115,12 +114,12 @@ class ShieldVisualizationEngine
     If tracker do not exists it will be created.
     */
     private static function setupTrackerForUnit(unit u, real shieldPower)
-        let checkList = shieldTrackers.filter( (ShieldPointsTracker t) -> t.getTrackedUnit() == u )
-        if checkList.size() == 0
-            shieldTrackers.add(new ShieldPointsTracker(u, shieldPower))
-        else 
-            checkList.get(0).addShield(shieldPower)
-        destroy checkList
+        for tracker in shieldTrackers
+            if tracker.getTrackedUnit() == u
+                tracker.addShield(shieldPower) 
+                return
+        shieldTrackers.add(new ShieldPointsTracker(u, shieldPower))
+        initVisualizationForUnit(u)
      
     /**
     Initalizes visualization mechanism for unit.
