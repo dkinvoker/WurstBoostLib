@@ -1,7 +1,7 @@
 package ShieldVisualizationEngine
 import LinkedList
 import ClosureTimers
-import VisualizationOptions
+import ShieldVisualizationOptions
 
 class ShieldPointsTracker
     private real currentShieldPoints = 0
@@ -92,15 +92,15 @@ class ShieldVisualizationEngine
          
     /**
     Updates visualization data based on damage done to the shield.
-    If onBroken parameter == true, while visualization may end at this time (If there is no more shield poinst left)
+    If canEndTracking parameter == true, while visualization may end at this time (If there is no more shield poinst left)
     */
-    static function registerShieldDamage(unit u, real damageAmount, bool onBroken)
+    static function registerShieldDamage(unit u, real damageAmount, bool canEndTracking)
         if visualizationOption == ShieldVisualization.NONE
             return
         for tracker in shieldTrackers
             if tracker.getTrackedUnit() == u
                 tracker.damageShield(damageAmount)
-                if onBroken and not tracker.hasAnyShieldLeft()
+                if canEndTracking and not tracker.hasAnyShieldLeft()
                     shieldTrackers.remove(tracker)
                     destroy tracker
                 break

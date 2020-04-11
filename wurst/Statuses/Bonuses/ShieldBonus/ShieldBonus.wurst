@@ -4,7 +4,7 @@ import StatusEffect
 import StatusEffectInstance
 import DamageEvent
 import ShieldBonusInstance
-import public VisualizationOptions
+import public ShieldVisualizationOptions
 import ShieldVisualizationEngine
 
 interface OnShieldBroakenEventHandler 
