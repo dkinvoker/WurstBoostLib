@@ -2,6 +2,7 @@ package ShieldVisualizationEngine
 import LinkedList
 import ClosureTimers
 import ShieldVisualizationOptions
+import StringUtils
 
 class ShieldPointsTracker
     private real currentShieldPoints = 0
@@ -34,29 +35,21 @@ class ShieldPointsTracker
     Setsup TEXT visualization texttag.
     */
     function initTextVisualization()
-        let text = this.getVisualizationString()
-        this.textVisualization = createTTEx(calculateTextPosForUnit(text.length()), text, 12)
+        this.textVisualization = createTTEx(this.target.getPos3Zero(), "", 12)
+        this.updateTextVisualization()
 
     /**
     Updates texttag position and text.
     */
     function updateTextVisualization()
         let text = getVisualizationString()
-        this.textVisualization
-        ..setPos(calculateTextPosForUnit(text.length()))
-        ..setText(text, 12)
+        this.textVisualization.center(this.target.getPos3Zero() + vec3(0, 165, 0), text, 12)
 
     /**
     Returns string displayed above unit when TEXT visualization is used.
     */
     private function getVisualizationString() returns string
         return "(" + this.currentShieldPoints.toInt().toString() + ")"
-
-    /**
-    Returns texttag position based on the text length.
-    */
-    private function calculateTextPosForUnit(int textLength) returns vec3
-        return this.target.getPos3Zero() + vec3(-textLength * 9.5, 165, 0)
 
     ondestroy
         this.textVisualization.destr()
