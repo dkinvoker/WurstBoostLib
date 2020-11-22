@@ -22,7 +22,7 @@ import Assets
 //Selecting Name, Desctription, Icon and visual effect.
 //Name, Description and Icon do not requires explanation, but "Ability" does.
 //"Buffs" Objects do not contain any effects by themselfs, there are just GameObject,
-//that can be attached to the unit to display information about units state.
+//that can be attached to the unit to display information about units state. 
 let MY_BUFF = compiletime(createDummyBuffObject(
 	"Shield", 
 	"This unit is shilded. Will not take any damage.", 
