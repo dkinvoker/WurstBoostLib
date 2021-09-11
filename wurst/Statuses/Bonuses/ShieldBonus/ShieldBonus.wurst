@@ -35,7 +35,7 @@ public class ShieldBonus extends StatusEffect
                 //Reduce damage done
                 DamageEvent.subAmount(damage)
 
-                //If Shield was broaken add damage that exeads shield power and and the effect
+                //If Shield was broaken add damage that exeads shield power and end the effect
                 let remainingShield = bonusInstance.getRemainingShield()
                 if remainingShield < 0
                     DamageEvent.addAmount(-remainingShield)
